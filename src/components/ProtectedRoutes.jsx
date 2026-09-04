@@ -1,19 +1,21 @@
-import { Navigate } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom'
+import useAuth from '../hooks/useAuth'
 
 const ProtectedRoutes = ({ children, roles }) => {
-  const { isAuthenticated, user } = useAuth();
-  
+  const { isAuthenticated, user } = useAuth()
+
+  //si no esta logueado lo mandamos al login
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />
   }
 
-  if (roles && !roles.includes(user.role)) {
-    return <Navigate to="/dashboard" replace />;
+  //si la ruta requiere un rol y el usuario no lo tiene
+  if (roles && !roles.includes(user?.role)) {
+    return <Navigate to="/dashboard" replace />
   }
 
-  return children;
-
+  //user autorizado
+  return children
 }
 
 export default ProtectedRoutes

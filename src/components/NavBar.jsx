@@ -38,7 +38,7 @@ function Navbar() {
                         Perfil
                     </Link>
 
-                    {/* Solo Admin */}
+                    {/* ADMIN */}
                     {user?.role === "Admin" && (
                         <Link to="/admin">
                             Panel Admin
@@ -47,7 +47,7 @@ function Navbar() {
 
                 </div>
 
-                {/* Usuario + Logout */}
+                {/* User y Logout */}
                 <div className="navbar-user">
 
                     <span>
