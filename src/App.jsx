@@ -6,7 +6,8 @@ import './App.css'
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import PanelAdmin from './pages/PanelAdmin';
-import ProtectedRoutes from './components/ProtectedRoutes'
+import ProtectedRoutes from './components/ProtectedRoutes';
+import NotFound from './pages/NotFound';
 
 function App() {
   
@@ -31,17 +32,17 @@ function App() {
 
           {/* Rutas ADMIN*/}
           <Route
-            path="/dashboard"
+            path="/admin"
             element={
               <ProtectedRoutes roles={['Admin']}>
                 <PanelAdmin />
               </ProtectedRoutes>
             }
           />
-        </Routes>
 
-        {/* 404 */}
-        <Route path="*" element={<NotFound />} />
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </Router>
     </>
   )
