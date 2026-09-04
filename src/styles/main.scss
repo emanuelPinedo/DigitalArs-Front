@@ -1,0 +1,198 @@
+// =============================================================================
+// DigitalArs — design tokens + light/dark themes
+// =============================================================================
+
+@font-face {
+  font-family: 'Elms Sans';
+  src: url('../assets/fonts/ElmsSans-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Elms Sans';
+  src: url('../assets/fonts/ElmsSans-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+// --- Static tokens (theme-independent) --------------------------------------
+
+$font-sans: 'Elms Sans', system-ui, 'Segoe UI', Roboto, sans-serif;
+
+$space-1: 5px;
+$space-2: 10px;
+$space-3: 15px;
+$space-4: 20px;
+$space-5: 25px;
+$space-6: 30px;
+$space-7: 40px;
+
+$radius-sm: 10px;
+$radius-md: 15px;
+$radius-lg: 20px;
+$radius-full: 9999px;
+
+$font-size-xs: 12px;
+$font-size-sm: 15px;
+$font-size-md: 20px;
+$font-size-lg: 25px;
+$font-size-xl: 30px;
+$font-size-2xl: 40px;
+
+$font-weight-regular: 400;
+$font-weight-bold: bold;
+
+$breakpoint-sm: 640px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+
+$duration-fast: 150ms;
+$duration-normal: 250ms;
+
+// --- Theme mixins -----------------------------------------------------------
+
+@mixin light-theme {
+  color-scheme: light;
+
+  --color-bg: #EDEDEF;
+  --color-surface: #FFFFFF;
+  --color-brand: #660CCB;
+  --color-brand-contrast: #F1E8FC;
+  --color-inactive: #F3F3F5;
+
+  --color-text: #202020;
+  --color-text-muted: #606060;
+  --color-text-inverse: #FFFFFF;
+
+  --color-border: #E3E3E7;
+  --color-border-corporate: #E3E3E7;
+
+  --shadow: 0 4px 8px rgba(15, 39, 68, 0.1);
+
+  --color-success: #20A66A;
+  --color-success-contrast: #E8F7F0;
+  --color-warning: #EAA52B;
+  --color-warning-contrast: #FFF6E5;
+  --color-error: #E1392B;
+  --color-error-contrast: #FFE6E6;
+}
+
+@mixin dark-theme {
+  color-scheme: dark;
+
+  --color-bg: #342F39;
+  --color-surface: #232125;
+  --color-brand: #660CCB;
+  --color-brand-contrast: #F1E8FC;
+  --color-inactive: #342F39;
+
+  --color-text: #FFFFFF;
+  --color-text-muted: #C7C7C7;
+  --color-text-inverse: #FFFFFF;
+
+  --color-border: #2F2F30;
+  --color-border-corporate: #342F39;
+
+  --shadow: 0 4px 8px rgba(15, 39, 68, 0.1);
+
+  --color-success: #20A66A;
+  --color-success-contrast: #E8F7F0;
+  --color-warning: #EAA52B;
+  --color-warning-contrast: #FFF6E5;
+  --color-error: #E1392B;
+  --color-error-contrast: #FFE6E6;
+}
+
+// --- Theme application ------------------------------------------------------
+
+:root,
+[data-theme='light'] {
+  @include light-theme;
+}
+
+[data-theme='dark'] {
+  @include dark-theme;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-theme;
+  }
+}
+
+// --- Static custom properties -----------------------------------------------
+
+:root {
+  --font-sans: #{$font-sans};
+
+  --space-1: #{$space-1};
+  --space-2: #{$space-2};
+  --space-3: #{$space-3};
+  --space-4: #{$space-4};
+  --space-5: #{$space-5};
+  --space-6: #{$space-6};
+  --space-7: #{$space-7};
+
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-full: #{$radius-full};
+
+  --font-size-xs: #{$font-size-xs};
+  --font-size-sm: #{$font-size-sm};
+  --font-size-md: #{$font-size-md};
+  --font-size-lg: #{$font-size-lg};
+  --font-size-xl: #{$font-size-xl};
+  --font-size-2xl: #{$font-size-2xl};
+
+  --font-weight-regular: #{$font-weight-regular};
+  --font-weight-bold: #{$font-weight-bold};
+
+  --duration-fast: #{$duration-fast};
+  --duration-normal: #{$duration-normal};
+}
+
+// --- Minimal reset ----------------------------------------------------------
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+#root {
+  min-height: 100svh;
+  width: 100%;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
