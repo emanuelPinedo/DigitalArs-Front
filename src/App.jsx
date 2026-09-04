@@ -17,23 +17,31 @@ function App() {
         <Routes>
           <Route path="/" element={<h1>Home</h1>} />
           <Route path="/login" element={<Login />} />
-          <Route
-            path="/protected"
-            element={
-              <ProtectedRoutes roles={['admin']}>
-                <h1>Protected Content</h1>
-              </ProtectedRoutes>
-            }
-          />
+
+          {/* Rutas protegidas con roles*/}
+          {/* Rutas USER*/}
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoutes roles={['user']}>
-                <h1>Protected Content</h1>
+              <ProtectedRoutes roles={['User']}>
+                <Dashboard />
+              </ProtectedRoutes>
+            }
+          />
+
+          {/* Rutas ADMIN*/}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoutes roles={['Admin']}>
+                <PanelAdmin />
               </ProtectedRoutes>
             }
           />
         </Routes>
+
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
       </Router>
     </>
   )

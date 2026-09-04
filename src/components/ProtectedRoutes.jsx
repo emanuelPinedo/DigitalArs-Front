@@ -1,14 +1,19 @@
-const ProtectedRoutes = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('token')
+import Navigate from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
-  const role = localStorage.getItem('role')
-  if (role === 'admin') {
-    return children
-  } else if (role === 'user') {
-    return children
-  } else {
-    return <Navigate to="/login" />
+const ProtectedRoutes = ({ children, roles }) => {
+  const { isAuthenticated, user } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
+
+  if (roles && !roles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+
 }
 
 export default ProtectedRoutes
