@@ -1,19 +1,338 @@
 @use '../tokens' as *;
 
 .transfer-page {
-  padding: $space-7;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: $space-5 $space-7;
   background: var(--color-bg);
   color: var(--color-text);
+}
 
-  h1 {
+.transfer-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+  gap: $space-6;
+  align-items: start;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.transfer-form-card .card-tab {
+  width: min(400px, 100%);
+}
+
+.transfer-form-card .card-body {
+  padding: $space-5;
+}
+
+.transfer-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.transfer-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.transfer-step {
+  flex: 1;
+  min-width: max-content;
+  padding: $space-2 $space-4;
+  border: none;
+  border-radius: $radius-full;
+  background: var(--color-inactive);
+  color: var(--color-text-muted);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+
+  &.active {
+    background: var(--color-brand);
+    color: var(--color-text-inverse);
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:disabled:not(.active) {
+    opacity: 0.85;
+  }
+}
+
+.transfer-field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+
+  label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+}
+
+.transfer-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 $space-3;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  outline: none;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus {
+    border-color: var(--color-brand);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+  }
+}
+
+.transfer-hint,
+.transfer-error {
+  font-size: $font-size-sm;
+}
+
+.transfer-hint {
+  color: var(--color-text-muted);
+}
+
+.transfer-error {
+  color: var(--color-error);
+}
+
+.transfer-banner {
+  padding: $space-3 $space-4;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+}
+
+.transfer-banner-success {
+  background: var(--color-success-contrast);
+  color: var(--color-success);
+}
+
+.transfer-banner-error {
+  background: var(--color-error-contrast);
+  color: var(--color-error);
+}
+
+.recipient-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recipient-option {
+  width: 100%;
+  padding: $space-3 $space-4;
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+  cursor: pointer;
+
+  h5 {
     margin: 0 0 $space-1;
-    font-size: $font-size-xl;
+    font-size: $font-size-sm;
     font-weight: $font-weight-bold;
   }
 
-  > p {
-    margin: 0 0 $space-6;
+  p {
+    margin: 0;
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+  }
+
+  .recipient-option-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+
+  &.selected,
+  &:hover:not(:disabled) {
+    border-color: var(--color-brand);
+    background: var(--color-brand-contrast);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+.recipient-verified {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  background: var(--color-brand-contrast);
+  border-radius: $radius-sm;
+
+  h5 {
+    margin: 0 0 $space-1;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: var(--color-brand);
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-size-xs;
+    color: var(--color-text-muted);
+  }
+}
+
+.recipient-verified-status {
+  flex-shrink: 0;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-success);
+}
+
+.transfer-summary {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  h2 {
+    margin: 0;
+    font-size: $font-size-md;
+    font-weight: $font-weight-bold;
+  }
+
+  dl {
+    display: flex;
+    flex-direction: column;
+    gap: $space-3;
+    margin: 0;
+  }
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-4;
+  }
+
+  dt {
     color: var(--color-text-muted);
     font-size: $font-size-sm;
+  }
+
+  dd {
+    margin: 0;
+    font-weight: $font-weight-bold;
+    text-align: right;
+  }
+}
+
+.transfer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+}
+
+.transfer-button {
+  min-width: 140px;
+  height: 44px;
+  padding: 0 $space-5;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.transfer-button-secondary {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.transfer-button-primary {
+  background: var(--color-brand);
+  border: 1px solid var(--color-brand);
+  color: var(--color-text-inverse);
+}
+
+.transfer-balance-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-5;
+}
+
+.transfer-balance-label {
+  margin: 0;
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+}
+
+.transfer-balance-amount {
+  margin: 0;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+}
+
+.transfer-balance-caption,
+.transfer-balance-error {
+  margin: 0;
+  font-size: $font-size-sm;
+}
+
+.transfer-balance-caption {
+  color: var(--color-text-muted);
+}
+
+.transfer-balance-error {
+  color: var(--color-error);
+}
+
+.transfer-balance-note {
+  margin-top: $space-4;
+  padding: $space-3 $space-4;
+  background: var(--color-success-contrast);
+  border-radius: $radius-sm;
+
+  strong {
+    display: block;
+    margin-bottom: $space-1;
+    font-size: $font-size-sm;
+    color: var(--color-success);
+  }
+
+  p {
+    margin: 0;
+    font-size: $font-size-sm;
+    color: var(--color-text-muted);
   }
 }

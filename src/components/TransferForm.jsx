@@ -21,6 +21,22 @@ function formatCurrency(value) {
     }).format(value);
 }
 
+function formatRecipientMeta(user) {
+    const parts = [];
+
+    if (user?.alias) {
+        parts.push(user.alias);
+    }
+
+    if (user?.cuit) {
+        parts.push(`CUIT ${user.cuit}`);
+    } else if (user?.dni) {
+        parts.push(`DNI ${user.dni}`);
+    }
+
+    return parts.join(" · ");
+}
+
 function TransferForm() {
     const [step, setStep] = useState(1);
     const [maxReachedStep, setMaxReachedStep] = useState(1);
@@ -69,6 +85,7 @@ function TransferForm() {
         if (!trimmedAlias) {
             searchRequestId.current += 1;
             setMatches([]);
+            setRecipient(null);
             setSearching(false);
             setSearchHint("");
             return undefined;
@@ -86,8 +103,19 @@ function TransferForm() {
                     return;
                 }
 
-                const list = Array.isArray(results) ? results : [];
+                const list = Array.isArray(results)
+                    ? results
+                    : results
+                        ? [results]
+                        : [];
                 setMatches(list);
+
+                const uniqueMatch =
+                    list.length === 1 && list[0].accountId != null
+                        ? list[0]
+                        : null;
+
+                setRecipient(uniqueMatch);
                 setSearchHint(
                     list.length === 0
                         ? "No encontramos un usuario con ese alias."
@@ -99,6 +127,7 @@ function TransferForm() {
                 }
 
                 setMatches([]);
+                setRecipient(null);
                 setSearchHint(
                     getApiErrorMessage(
                         error,
@@ -153,6 +182,11 @@ function TransferForm() {
         setErrors({});
         resetFeedback();
         setStep(nextStep);
+    };
+
+    const handleCancel = () => {
+        resetForm();
+        resetFeedback();
     };
 
     const handleContinueFromRecipient = () => {
@@ -234,7 +268,7 @@ function TransferForm() {
 
     return (
         <form className="transfer-form" onSubmit={handleConfirm}>
-            <nav aria-label="Pasos de la transferencia">
+            <nav className="transfer-steps" aria-label="Pasos de la transferencia">
                 {STEPS.map((item) => {
                     const isActive = step === item.id;
                     const isClickable = canVisitStep(item.id);
@@ -243,7 +277,7 @@ function TransferForm() {
                         <button
                             key={item.id}
                             type="button"
-                            className={` ${isActive ? "active" : ""}`}
+                            className={`transfer-step ${isActive ? "active" : ""}`}
                             disabled={!isClickable || submitting}
                             onClick={() => goToStep(item.id)}
                         >
@@ -254,14 +288,17 @@ function TransferForm() {
             </nav>
 
             {successMessage && (
-                <div>{successMessage}</div>
+                <div className="transfer-banner transfer-banner-success" role="status">
+                    {successMessage}
+                </div>
             )}
 
             {step === 1 && (
                 <>
-                    <div>
+                    <div className="transfer-field">
                         <label htmlFor="alias">Alias del destinatario</label>
                         <input
+                            className="transfer-input"
                             type="text"
                             id="alias"
                             name="alias"
@@ -272,63 +309,75 @@ function TransferForm() {
                             autoComplete="off"
                         />
                         {searching && (
-                            <span>Buscando...</span>
+                            <span className="transfer-hint">Buscando...</span>
                         )}
                         {errors.alias && (
-                            <span>{errors.alias}</span>
+                            <span className="transfer-error">{errors.alias}</span>
                         )}
                     </div>
 
-                    {matches.length > 0 && (
-                        <div>
-                            <ul>
-                                {matches.map((user) => {
-                                    const hasAccount = user.accountId != null;
-                                    const isSelected = recipient?.id === user.id;
-
-                                    return (
-                                        <li key={user.id}>
-                                            <button
-                                                type="button"
-                                                className={`recipient-option ${isSelected ? "selected" : ""}`}
-                                                onClick={() => handleSelectRecipient(user)}
-                                                disabled={submitting || !hasAccount}
-                                            >
-                                                <h5>{user.fullName}</h5>
-                                                <div style={{ display: "flex" }}>
-                                                    <p>DNI: {user.dni}</p>
-                                                    <p>Alias: {user.alias}</p>
-                                                </div>
-                                                {!hasAccount && (
-                                                    <span>
-                                                        Sin cuenta para recibir fondos
-                                                    </span>
-                                                )}
-                                            </button>
-                                        </li>
-                                    );
-                                })}
-                            </ul>
+                    {hasRecipient && (
+                        <div className="recipient-verified">
+                            <div>
+                                <h5>{recipient.fullName}</h5>
+                                <p>{formatRecipientMeta(recipient)}</p>
+                            </div>
+                            <span className="recipient-verified-status">
+                                ✓ Verificado
+                            </span>
                         </div>
                     )}
 
+                    {!hasRecipient && matches.length > 0 && (
+                        <ul className="recipient-list">
+                            {matches.map((user) => {
+                                const hasAccount = user.accountId != null;
+                                const isSelected = recipient?.id === user.id;
+
+                                return (
+                                    <li key={user.id}>
+                                        <button
+                                            type="button"
+                                            className={`recipient-option ${isSelected ? "selected" : ""}`}
+                                            onClick={() => handleSelectRecipient(user)}
+                                            disabled={submitting || !hasAccount}
+                                        >
+                                            <h5>{user.fullName}</h5>
+                                            <div className="recipient-option-meta">
+                                                <p>Alias: {formatRecipientMeta(user)}</p>
+                                            </div>
+                                            {!hasAccount && (
+                                                <span className="transfer-error">
+                                                    Sin cuenta para recibir fondos
+                                                </span>
+                                            )}
+                                        </button>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )}
+
                     {searchHint && (
-                        <div>{searchHint}</div>
+                        <div className="transfer-hint">{searchHint}</div>
                     )}
 
                     {errors.recipient && (
-                        <span>{errors.recipient}</span>
+                        <span className="transfer-error">{errors.recipient}</span>
                     )}
 
-                    {recipient && (
-                        <p>
-                            Destinatario: {recipient.fullName} ({recipient.alias})
-                        </p>
-                    )}
-
-                    <div>
+                    <div className="transfer-actions">
                         <button
                             type="button"
+                            className="transfer-button transfer-button-secondary"
+                            onClick={handleCancel}
+                            disabled={submitting}
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="button"
+                            className="transfer-button transfer-button-primary"
                             onClick={handleContinueFromRecipient}
                             disabled={submitting || !hasRecipient}
                         >
@@ -340,9 +389,10 @@ function TransferForm() {
 
             {step === 2 && (
                 <>
-                    <div>
+                    <div className="transfer-field">
                         <label htmlFor="amount">Monto</label>
                         <input
+                            className="transfer-input"
                             type="number"
                             id="amount"
                             name="amount"
@@ -354,13 +404,14 @@ function TransferForm() {
                             disabled={submitting}
                         />
                         {errors.amount && (
-                            <span>{errors.amount}</span>
+                            <span className="transfer-error">{errors.amount}</span>
                         )}
                     </div>
 
-                    <div>
+                    <div className="transfer-field">
                         <label htmlFor="description">Descripción</label>
                         <input
+                            className="transfer-input"
                             type="text"
                             id="description"
                             name="description"
@@ -371,9 +422,10 @@ function TransferForm() {
                         />
                     </div>
 
-                    <div>
+                    <div className="transfer-actions">
                         <button
                             type="button"
+                            className="transfer-button transfer-button-secondary"
                             onClick={() => goToStep(1)}
                             disabled={submitting}
                         >
@@ -381,6 +433,7 @@ function TransferForm() {
                         </button>
                         <button
                             type="button"
+                            className="transfer-button transfer-button-primary"
                             onClick={handleContinueFromAmount}
                             disabled={submitting}
                         >
@@ -392,7 +445,7 @@ function TransferForm() {
 
             {step === 3 && (
                 <>
-                    <div>
+                    <div className="transfer-summary">
                         <h2>Resumen de la transferencia</h2>
                         <dl>
                             <div>
@@ -415,12 +468,15 @@ function TransferForm() {
                     </div>
 
                     {serverError && (
-                        <div>{serverError}</div>
+                        <div className="transfer-banner transfer-banner-error">
+                            {serverError}
+                        </div>
                     )}
 
-                    <div>
+                    <div className="transfer-actions">
                         <button
                             type="button"
+                            className="transfer-button transfer-button-secondary"
                             onClick={() => goToStep(2)}
                             disabled={submitting}
                         >
@@ -428,6 +484,7 @@ function TransferForm() {
                         </button>
                         <button
                             type="submit"
+                            className="transfer-button transfer-button-primary"
                             disabled={submitting}
                         >
                             {submitting ? "Enviando..." : "Confirmar"}

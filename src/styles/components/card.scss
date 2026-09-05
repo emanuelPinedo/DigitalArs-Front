@@ -1,0 +1,26 @@
+@use '../tokens' as *;
+
+.card {
+  background: var(--color-surface);
+  border-radius: $radius-lg;
+  box-shadow: var(--shadow);
+}
+
+.card-tab {
+  width: 400px;
+  padding: $space-2 $space-5;
+  background: var(--color-brand);
+  border-top-left-radius: $radius-lg;
+  border-bottom-right-radius: $radius-lg;
+  text-align: center;
+
+  h2 {
+    font-size: $font-size-md;
+    font-weight: $font-weight-bold;
+    color: var(--color-text-inverse);
+  }
+}
+
+.card-body {
+  padding: $space-3;
+}
