@@ -6,7 +6,7 @@ import Transferencias from './pages/Transferencias'
 import Perfil from './pages/Perfil'
 import PanelAdmin from './pages/PanelAdmin'
 import NotFound from './pages/NotFound'
-import Layout from './components/Layout'
+import Layout from './components/layout/Layout'
 import ProtectedRoutes from './components/ProtectedRoutes'
 
 function App() {
