@@ -2,6 +2,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "../styles/dashboard.css";
 
+function formatCurrency(value) {
+    return new Intl.NumberFormat("es-AR", {
+        style: "currency",
+        currency: "ARS"
+    }).format(value);
+};
+
+const isIncoming = (type) => {
+    return type === "Deposit" || type === "Transfer_In";
+};
+
 function Dashboard() {
     const [account, setAccount] = useState(null);
     const [transactions, setTransactions] = useState([]);
@@ -10,18 +21,20 @@ function Dashboard() {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        
         const loadDashboard = async () => {
             try {
                 setLoading(true);
                 setError("");
 
-                const [accountResponse, transactionsResponse] =
-                    await Promise.all([
-                        axios.get("/api/accounts/me"),
-                        axios.get("/api/transactions/me")
-                    ]);
-                 setAccount(accountResponse.data);
-                setTransactions(transactionsResponse.data.slice(0, 5));
+                const accountResponse = await axios.get("/api/accounts/me");
+
+                const transactionsResponse = await axios.get(
+                    "/api/transactions/me?page=1&pageSize=5"
+                );
+                
+                setAccount(accountResponse.data);
+                setTransactions(transactionsResponse.data.items);
 
             } catch (error) {
                 console.error(error);
@@ -32,6 +45,7 @@ function Dashboard() {
         };
 
         loadDashboard();
+
     }, []);
 
     if (loading) {
@@ -39,7 +53,7 @@ function Dashboard() {
             <main className="dashboard-page">
                 <div className="dashboard-loading">
                     <div className="spinner"></div>
-                    <p>Cargando tu cuenta...</p>
+                    <p>Cargando billetera...</p>
                 </div>
             </main>
         );
@@ -62,13 +76,12 @@ function Dashboard() {
         <main className='dashboard-page'>
             <header className="dashboard-header">
                 <div>
-                    <h1>Mi cuenta</h1>
-                    <p>Resumen de tu billetera</p>
+                    <h1>Dashboard</h1>
+                    <p>Una vista simple de tus finanzas</p>
                 </div>
             </header>
 
             <section className="dashboard-balance">
-
                 <div>
                     <span className="balance-label">
                         Saldo disponible
@@ -84,17 +97,14 @@ function Dashboard() {
             <section className="dashboard-actions">
 
                 <button className="action-button">
-                    <span>+</span>
                     Ingresar fondos
                 </button>
 
                 <button className="action-button">
-                    <span>↗</span>
                     Transferencias
                 </button>
 
                 <button className="action-button">
-                    <span>↗</span>
                     Historial de movimientos
                 </button>
 
@@ -103,7 +113,7 @@ function Dashboard() {
             <section className="transactions-section">
 
                 <div className="transactions-header">
-                    <h2>Últimos movimientos</h2>
+                    <h2>Actividad reciente</h2>
                 </div>
 
                 {transactions.length === 0 ? (
@@ -113,15 +123,22 @@ function Dashboard() {
                 ) : (
                     <div className="transactions-list">
 
-                        {/*transactions.map((transaction) => (
-                            <TransactionItem
-                                key={transaction.id}
-                                transaction={transaction}
-                            />
-                        ))*/}
+                        {transactions.map((transaction) => {
+                            const incoming = isIncoming(transaction.type);
 
+                            return (
+                                <div key={transaction.id}>
+                                    <p>{transaction.description}</p>
+                                    <span>
+                                        {incoming ? "+" : "-"}
+                                        {formatCurrency(transaction.amount)}
+                                    </span>
+                                    <p>{transaction.date}</p>
+                                </div>
+                            );
+                        })}
                     </div>
-                )}
+                )};
 
             </section>
 
@@ -129,54 +146,7 @@ function Dashboard() {
     );
 }
 
-function TransactionItem({ transaction }) {
-
-    const isIncome = transaction.type === "Deposit"
-        || transaction.type === "TransferIn";
-
-    return (
-        <div className="transaction-item">
-
-            <div className={`transaction-icon ${isIncome ? "income" : "expense"}`}>
-                {isIncome ? "+" : "-"}
-            </div>
-
-            <div className="transaction-info">
-
-                <strong>
-                    {transaction.type}
-                </strong>
-
-                <span>
-                    {transaction.counterparty}
-                </span>
-
-            </div>
-
-            <div className="transaction-details">
-
-                <strong className={isIncome ? "income-text" : "expense-text"}>
-                    {isIncome ? "+" : "-"}
-                    {formatCurrency(Math.abs(transaction.amount))}
-                </strong>
-
-                <span>
-                    {formatDate(transaction.date)}
-                </span>
-
-            </div>
-
-        </div>
-    );
-}
-
-function formatCurrency(value) {
-    return new Intl.NumberFormat("es-AR", {
-        style: "currency",
-        currency: "ARS"
-    }).format(value);
-}
-
+/* esto creo que ya viene bien del backend
 function formatDate(value) {
     return new Intl.DateTimeFormat("es-AR", {
         day: "2-digit",
@@ -184,6 +154,6 @@ function formatDate(value) {
         year: "numeric"
     }).format(new Date(value));
 }
-
+*/
 
 export default Dashboard;

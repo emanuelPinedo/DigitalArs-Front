@@ -6,9 +6,7 @@
     background-color: #f7f7f9;
 }
 
-/* =========================
-   HEADER
-   ========================= */
+/* HEADER */
 
 .dashboard-header {
     margin-bottom: 30px;
@@ -25,10 +23,8 @@
     color: #777;
 }
 
-/* =========================
-   SALDO
-   ========================= */
-
+/* SALDO */
+   
 .dashboard-balance {
     width: 100%;
     max-width: 850px;
@@ -38,8 +34,8 @@
 
     border-radius: 12px;
 
-    background-color: #6d0fd5;
-    color: white;
+    background-color: #ffffff/*#6d0fd5*/;
+    color: #222 ;
 
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
@@ -60,10 +56,8 @@
     font-weight: 600;
 }
 
-/* =========================
-   ACCIONES
-   ========================= */
-
+/* ACCIONES */
+   
 .dashboard-actions {
     display: flex;
     gap: 15px;
@@ -78,8 +72,8 @@
     border: none;
     border-radius: 6px;
 
-    background-color: white;
-    color: #6d0fd5;
+    background-color: #6d0fd5;
+    color: white;
 
     font-size: 16px;
     font-weight: 600;
@@ -95,13 +89,11 @@
 }
 
 .action-button:hover {
-    background-color: #f1e7fb;
+    background-color: #222;
 }
 
-/* =========================
-   MOVIMIENTOS
-   ========================= */
-
+/* MOVIMIENTOS */
+   
 .transactions-section {
     width: 100%;
     max-width: 850px;
@@ -115,7 +107,8 @@
     margin: 0;
 
     font-size: 22px;
-    color: #222;
+    color: white;
+    background-color: #6d0fd5;
 }
 
 .transactions-list {
@@ -127,10 +120,8 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
-/* =========================
-   MOVIMIENTO
-   ========================= */
-
+/* MOVIMIENTO */
+   
 .transaction-item {
     min-height: 75px;
 
@@ -173,10 +164,8 @@
     color: #d63c3c;
 }
 
-/* =========================
-   INFORMACIÓN
-   ========================= */
-
+/* INFORMACIÓN */
+   
 .transaction-info {
     display: flex;
     flex-direction: column;
@@ -196,10 +185,8 @@
     color: #888;
 }
 
-/* =========================
-   MONTO Y FECHA
-   ========================= */
-
+/* MONTO Y FECHA */
+   
 .transaction-details {
     display: flex;
     flex-direction: column;
@@ -225,9 +212,7 @@
     color: #d63c3c;
 }
 
-/* =========================
-   SIN MOVIMIENTOS
-   ========================= */
+/* SIN MOVIMIENTOS */
 
 .empty-transactions {
     padding: 30px;
@@ -239,9 +224,7 @@
     text-align: center;
 }
 
-/* =========================
-   LOADING
-   ========================= */
+/* LOADING */
 
 .dashboard-loading {
     min-height: 70vh;
@@ -273,9 +256,7 @@
     }
 }
 
-/* =========================
-   ERROR
-   ========================= */
+/* ERROR */
 
 .dashboard-error {
     min-height: 70vh;
@@ -302,9 +283,7 @@
     cursor: pointer;
 }
 
-/* =========================
-   RESPONSIVE
-   ========================= */
+/*  RESPONSIVE */
 
 @media (max-width: 700px) {
 
