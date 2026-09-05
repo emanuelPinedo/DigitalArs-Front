@@ -1,7 +1,6 @@
 @use '../tokens' as *;
 
 .transfer-page {
-  min-height: 100svh;
   padding: $space-7;
   background: var(--color-bg);
   color: var(--color-text);

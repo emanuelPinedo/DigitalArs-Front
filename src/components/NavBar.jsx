@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 function Navbar() {
@@ -12,54 +12,39 @@ function Navbar() {
 
     return (
         <nav className="navbar">
-            <div className="navbar-container">
+            <Link to="/dashboard" className="navbar-logo">
+                DigitalArs
+            </Link>
 
-                {/* Logo / nombre */}
-                <Link to="/dashboard" className="navbar-logo"> {/*no hay logo */}
-                    DigitalArs
-                </Link>
+            <div className="navbar-links">
+                <NavLink to="/dashboard">
+                    Dashboard
+                </NavLink>
 
-                {/* Opciones de navegación */}
-                <div className="navbar-links">
+                <NavLink to="/deposit">
+                    Depósito
+                </NavLink>
 
-                    <Link to="/dashboard">
-                        Dashboard
-                    </Link>
+                <NavLink to="/transferencias">
+                    Transferencia
+                </NavLink>
 
-                    <Link to="/deposit">
-                        Depósito
-                    </Link>
+                <NavLink to="/perfil">
+                    Perfil
+                </NavLink>
 
-                    <Link to="/transferencias">
-                        Transferencias
-                    </Link>
+                {user?.role === "Admin" && (
+                    <NavLink to="/admin">
+                        Admin
+                    </NavLink>
+                )}
+            </div>
 
-                    <Link to="/perfil">
-                        Perfil
-                    </Link>
-
-                    {/* ADMIN */}
-                    {user?.role === "Admin" && (
-                        <Link to="/admin">
-                            Panel Admin
-                        </Link>
-                    )}
-
-                </div>
-
-                {/* User y Logout */}
-                <div className="navbar-user">
-
-                    <span>
-                        {user?.email}
-                    </span>
-
-                    <button onClick={handleLogout}>
-                        Cerrar sesión
-                    </button>
-
-                </div>
-
+            <div className="navbar-user">
+                <span>{user?.email}</span>
+                <button type="button" onClick={handleLogout}>
+                    Cerrar sesión
+                </button>
             </div>
         </nav>
     );

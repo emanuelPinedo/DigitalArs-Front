@@ -60,13 +60,6 @@ function Dashboard() {
 
     return (
         <main className='dashboard-page'>
-            <header className="dashboard-header">
-                <div>
-                    <h1>Mi cuenta</h1>
-                    <p>Resumen de tu billetera</p>
-                </div>
-            </header>
-
             <section className="dashboard-balance">
 
                 <div>
