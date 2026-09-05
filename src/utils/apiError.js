@@ -34,7 +34,7 @@ export function getApiErrorMessage(error, fallback) {
     }
 
     if (status === 400) {
-        return 'No se pudo completar la operación. Revisá el monto y el destinatario.';
+        return fallback || 'No se pudo completar la operación. Revisá el monto y el destinatario.';
     }
 
     if (status === 404) {

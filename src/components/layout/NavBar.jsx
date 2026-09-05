@@ -33,6 +33,10 @@ function Navbar() {
                     Perfil
                 </NavLink>
 
+                <NavLink to="/historial">
+                    Historial
+                </NavLink>
+
                 {user?.role === "Admin" && (
                     <NavLink to="/admin">
                         Admin

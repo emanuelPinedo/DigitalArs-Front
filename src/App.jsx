@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import Deposit from './pages/Deposit'
 import Transferencias from './pages/Transferencias'
 import Perfil from './pages/Perfil'
+import Historial from './pages/Historial'
 import PanelAdmin from './pages/PanelAdmin'
 import NotFound from './pages/NotFound'
 import Layout from './components/layout/Layout'
@@ -48,6 +49,10 @@ function App() {
           <Route
             path="/perfil"
             element={<Perfil />}
+          />
+          <Route
+            path="/historial"
+            element={<Historial />}
           />
 
           <Route

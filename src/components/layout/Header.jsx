@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import "../../styles/layout/header.scss";
 
 const PAGE_HEADERS = {
     "/dashboard": {
@@ -17,6 +18,10 @@ const PAGE_HEADERS = {
         title: "Perfil",
         subtitle: "Administrá tus datos y la seguridad de tu cuenta",
     },
+    "/historial": {
+        title: "Historial",
+        subtitle: "Consultá todos tus movimientos",
+    },
     "/admin": {
         title: "Admin",
         subtitle: "Monitoreo operativo y gestión de usuarios",
@@ -33,7 +38,7 @@ function Header() {
 
     return (
         <header className="app-header">
-            <h1>{page.title}</h1>
+            <h2>{page.title}</h2>
             <p>{page.subtitle}</p>
         </header>
     );

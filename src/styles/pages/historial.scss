@@ -1,0 +1,218 @@
+@use '../tokens' as *;
+
+.historial-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: $space-4;
+  background: var(--color-bg);
+  color: var(--color-text);
+
+  .historial-filters {
+    display: grid;
+    flex-shrink: 0;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: $space-4;
+    margin-bottom: $space-6;
+    padding: $space-5;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    box-shadow: var(--shadow);
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    min-width: 0;
+
+    label {
+      font-size: $font-size-sm;
+      color: var(--color-text-muted);
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 44px;
+      padding: 0 $space-3;
+      background: var(--color-bg);
+      border: 1px solid var(--color-border);
+      border-radius: $radius-sm;
+      outline: none;
+
+      &:focus {
+        border-color: var(--color-brand);
+      }
+    }
+  }
+
+  .filter-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: $space-2;
+  }
+
+  .filter-button,
+  .filter-button-secondary {
+    height: 44px;
+    padding: 0 $space-4;
+    border: none;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .filter-button {
+    background: var(--color-brand);
+    color: var(--color-text-inverse);
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+
+  .filter-button-secondary {
+    background: var(--color-inactive);
+    color: var(--color-text);
+  }
+
+  .filter-error {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: var(--color-error);
+    font-size: $font-size-sm;
+  }
+
+  .historial-status,
+  .historial-error,
+  .historial-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $space-6;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+  }
+
+  .historial-error {
+    color: var(--color-error);
+
+    button {
+      margin-top: $space-3;
+      height: 40px;
+      padding: 0 $space-4;
+      border: none;
+      border-radius: $radius-sm;
+      background: var(--color-brand);
+      color: var(--color-text-inverse);
+      cursor: pointer;
+    }
+  }
+
+  .historial-empty {
+    text-align: center;
+    color: var(--color-text);
+  }
+
+  .historial-table-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: $radius-md;
+    box-shadow: var(--shadow);
+  }
+
+  table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    padding: $space-3 $space-4;
+    text-align: left;
+    font-size: $font-size-sm;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  th {
+    color: var(--color-text-muted);
+    font-weight: $font-weight-regular;
+    white-space: nowrap;
+  }
+
+  td.amount {
+    font-weight: $font-weight-bold;
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  th.amount {
+    text-align: right;
+  }
+
+  .amount-in {
+    color: var(--color-success);
+  }
+
+  .amount-out {
+    color: var(--color-error);
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .historial-pagination {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    margin-top: $space-4;
+    color: var(--color-text-muted);
+    font-size: $font-size-sm;
+  }
+
+  .pagination-actions {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  .pagination-actions button {
+    height: 40px;
+    padding: 0 $space-3;
+    border: 1px solid var(--color-border);
+    border-radius: $radius-sm;
+    background: var(--color-surface);
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .historial-page {
+    padding: $space-4;
+
+    .filter-actions {
+      grid-column: 1 / -1;
+    }
+  }
+}

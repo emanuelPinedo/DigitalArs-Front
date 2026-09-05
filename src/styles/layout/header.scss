@@ -1,0 +1,21 @@
+@use '../tokens' as *;
+
+.app-header {
+    display: flex;
+    flex-direction: column;
+    padding: $space-4;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow);
+
+    h2 {
+        font-size: $font-size-xl;
+        font-weight: $font-weight-bold;
+        color: var(--color-text);
+    }
+
+    p {
+        font-size: $font-size-sm;
+        color: var(--color-text-muted);
+    }
+}
