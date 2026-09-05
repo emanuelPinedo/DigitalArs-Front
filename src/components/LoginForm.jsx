@@ -1,7 +1,8 @@
-import "../styles/login.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import eyeIcon from "../assets/images/icons/eye.svg";
+import eyeOffIcon from "../assets/images/icons/eye-off.svg";
 
 function LoginForm() {
     const { login } = useAuth();
@@ -126,7 +127,11 @@ return (
                        : "Mostrar contraseña" 
                     }
                 >
-                    {showPassword ? "◉" : "👁"}
+                    <img
+                        className="toggle-password-icon"
+                        src={showPassword ? eyeOffIcon : eyeIcon}
+                        alt=""
+                    />
                 </button>
 
             </div>

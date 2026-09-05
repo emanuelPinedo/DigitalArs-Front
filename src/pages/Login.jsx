@@ -1,5 +1,7 @@
 import LoginForm from '../components/LoginForm';
-// aca hay que importar el componente UI ???
+import Topography from '../components/Topography';
+import logo from '../assets/images/logo.svg';
+import '../styles/pages/login.scss';
 
 //admin@digitalars.com
 // Admin123!
@@ -12,17 +14,19 @@ function Login() {
     return (
         <main className='login-page'>
 
-            <div className="login-visual">
-                {/* componente Topography */}
+            <div className="login-visual" style={{ backgroundColor: '#232125' }}>
+                <Topography/>
             </div>
 
             <div className="login-form-container">
 
                 <div className="login-logo">
                     <img
-                        src="/logo.png"
-                        alt="DigitalArs Wallet"
+                        src={logo}
+                        alt="DigitalArs"
                     />
+                    <h2>Digital<span>Ars</span></h2>
+                    <p>Wallet</p>
                 </div>
 
                 <LoginForm />
