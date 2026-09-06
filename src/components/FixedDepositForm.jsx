@@ -262,7 +262,7 @@ function FixedDepositForm({ availableBalance, annualRate, onCreated }) {
                             name="termDays"
                             min="1"
                             step="1"
-                            placeholder="30"
+                            placeholder="0"
                             value={termDays}
                             onChange={handleTermDaysChange}
                             disabled={submitting}
