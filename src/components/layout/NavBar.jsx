@@ -5,6 +5,7 @@ import "../../styles/layout/navbar.scss";
 import dashboardIcon from "../../assets/images/icons/layout-dashboard.svg?raw";
 import walletIcon from "../../assets/images/icons/wallet.svg?raw";
 import sendIcon from "../../assets/images/icons/send.svg?raw";
+import landmarkIcon from "../../assets/images/icons/landmark.svg?raw";
 import userIcon from "../../assets/images/icons/user.svg?raw";
 import historyIcon from "../../assets/images/icons/book-text.svg?raw";
 import adminIcon from "../../assets/images/icons/user-star.svg?raw";
@@ -62,6 +63,11 @@ function Navbar() {
                 <NavLink to="/historial">
                     <NavIcon svg={historyIcon} />
                     Historial
+                </NavLink>
+                
+                <NavLink to="/plazo-fijo">
+                    <NavIcon svg={landmarkIcon} />
+                    Plazo fijo
                 </NavLink>
 
                 {user?.role === "Admin" && (

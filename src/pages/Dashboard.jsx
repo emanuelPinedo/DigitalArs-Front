@@ -10,6 +10,7 @@ import "../styles/pages/dashboard.scss";
 
 import walletIcon from "../assets/images/icons/wallet.svg?raw";
 import sendIcon from "../assets/images/icons/send.svg?raw";
+import landmarkIcon from "../assets/images/icons/landmark.svg?raw";
 import historyIcon from "../assets/images/icons/book-text.svg?raw";
 import downloadIcon from "../assets/images/icons/download.svg?raw";
 import arrowLeftIcon from "../assets/images/icons/arrow-left.svg?raw";
@@ -175,7 +176,7 @@ function Dashboard() {
                             fontWeight="bold"
                         />
                     ) : (
-                        <span className="dashboard-balance-masked">••••••</span>
+                        <span className="dashboard-balance-masked">********</span>
                     )}
                 </h2>
                 <p className="dashboard-alias">Alias: {alias ? alias : "Alias del cliente"}</p>
@@ -190,6 +191,11 @@ function Dashboard() {
                 <Link to="/transferencias" className="dashboard-action">
                     <Icon svg={sendIcon} />
                     Transferencias
+                </Link>
+
+                <Link to="/plazo-fijo" className="dashboard-action">
+                    <Icon svg={landmarkIcon} />
+                    Plazo fijo
                 </Link>
 
                 <Link to="/historial" className="dashboard-action">

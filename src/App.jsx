@@ -3,6 +3,7 @@ import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Deposit from './pages/Deposit'
 import Transferencias from './pages/Transferencias'
+import PlazoFijo from './pages/PlazoFijo'
 import Perfil from './pages/Perfil'
 import Historial from './pages/Historial'
 import PanelAdmin from './pages/PanelAdmin'
@@ -44,6 +45,11 @@ function App() {
           <Route
             path="/transferencias"
             element={<Transferencias />}
+          />
+
+          <Route
+            path="/plazo-fijo"
+            element={<PlazoFijo />}
           />
 
           <Route

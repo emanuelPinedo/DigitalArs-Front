@@ -14,6 +14,10 @@ const PAGE_HEADERS = {
         title: "Transferencia",
         subtitle: "Enviá pesos de forma inmediata y segura",
     },
+    "/plazo-fijo": {
+        title: "Plazo fijo",
+        subtitle: "Invertí tu dinero y generá rendimiento",
+    },
     "/perfil": {
         title: "Perfil",
         subtitle: "Administrá tus datos y la seguridad de tu cuenta",
@@ -74,14 +78,29 @@ function MoonIcon() {
     );
 }
 
+function resolvePageHeader(pathname) {
+    const normalized = (pathname || "/").replace(/\/+$/, "") || "/";
+
+    if (PAGE_HEADERS[normalized]) {
+        return PAGE_HEADERS[normalized];
+    }
+
+    const match = Object.keys(PAGE_HEADERS)
+        .sort((a, b) => b.length - a.length)
+        .find(
+            (path) => normalized === path || normalized.startsWith(`${path}/`)
+        );
+
+    return match ? PAGE_HEADERS[match] : null;
+}
+
 function Header({ theme, toggleTheme }) {
     const { pathname } = useLocation();
-    const page = PAGE_HEADERS[pathname];
+    const page = resolvePageHeader(pathname) ?? {
+        title: "DigitalArs",
+        subtitle: "",
+    };
     const isDark = theme === "dark";
-
-    if (!page) {
-        return null;
-    }
 
     return (
         <header className="app-header">
