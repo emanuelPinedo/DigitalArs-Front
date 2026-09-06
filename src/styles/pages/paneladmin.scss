@@ -397,3 +397,31 @@
     grid-template-columns: 1fr;
   }
 }
+
+.users-table {
+    th,
+    td {
+        padding: 18px 16px;
+    }
+
+    th {
+        color: var(--color-text-muted);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        text-transform: uppercase;
+    }
+
+    td {
+        font-size: var(--font-size-sm);
+    }
+}
+
+.users-table__balance {
+    text-align: right !important;
+    font-weight: var(--font-weight-bold);
+}
+
+.users-table th:nth-child(3),
+.users-table td:nth-child(3) {
+    text-align: right;
+}
