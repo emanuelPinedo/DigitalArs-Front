@@ -1,30 +1,22 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import './App.css'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Deposit from './pages/Deposit'
 import Transferencias from './pages/Transferencias'
 import Perfil from './pages/Perfil'
+import Historial from './pages/Historial'
 import PanelAdmin from './pages/PanelAdmin'
 import NotFound from './pages/NotFound'
-import Navbar from './components/NavBar'
+import Layout from './components/layout/Layout'
 import ProtectedRoutes from './components/ProtectedRoutes'
-import useAuth from './hooks/useAuth'
 
 function App() {
-  const { isAuthenticated } = useAuth()
-
   return (
     <Router>
-
-      {/* Navbar solamente cuando el usuario está logueado */}
-      {isAuthenticated && <Navbar />}
-
       <Routes>
-
         <Route
           path="/"
-          element={<Navigate to="/login" replace  />}
+          element={<Navigate to="/login" replace />}
         />
 
         <Route
@@ -32,62 +24,52 @@ function App() {
           element={<Login />}
         />
 
-        {/* Rutas protegidas */}
         <Route
-          path="/dashboard"
           element={
             <ProtectedRoutes>
-              <Dashboard />
+              <Layout />
             </ProtectedRoutes>
           }
-        />
+        >
+          <Route
+            path="/dashboard"
+            element={<Dashboard />}
+          />
 
-        <Route
-          path="/deposit"
-          element={
-            <ProtectedRoutes>
-              <Deposit />
-            </ProtectedRoutes>
-          }
-        />
+          <Route
+            path="/deposit"
+            element={<Deposit />}
+          />
 
-        <Route
-          path="/transferencias"
-          element={
-            <ProtectedRoutes>
-              <Transferencias />
-            </ProtectedRoutes>
-          }
-        />
+          <Route
+            path="/transferencias"
+            element={<Transferencias />}
+          />
 
-        <Route
-          path="/perfil"
-          element={
-            <ProtectedRoutes>
-              <Perfil />
-            </ProtectedRoutes>
-          }
-        />
+          <Route
+            path="/perfil"
+            element={<Perfil />}
+          />
+          <Route
+            path="/historial"
+            element={<Historial />}
+          />
 
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoutes roles={['Admin']}>
+                <PanelAdmin />
+              </ProtectedRoutes>
+            }
+          />
+        </Route>
 
-        {/* Ruta solamente para Admin */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoutes roles={['Admin']}>
-              <PanelAdmin />
-            </ProtectedRoutes>
-          }
-        />
-
-        {/* Ruta para cualquier otro caso (404) */}
         <Route
           path="*"
           element={<NotFound />}
         />
-
       </Routes>
-
     </Router>
   )
 }

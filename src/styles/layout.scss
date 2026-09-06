@@ -1,0 +1,53 @@
+.app-layout {
+  display: flex;
+  min-height: 100svh;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 240px;
+  min-height: 100svh;
+}
+
+.navbar-links {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100svh;
+  max-height: 100svh;
+  position: relative;
+  isolation: isolate;
+}
+
+.app-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.app-header {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.app-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+}

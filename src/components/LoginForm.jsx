@@ -1,7 +1,8 @@
-import "../styles/login.css";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import eyeIcon from "../assets/images/icons/eye.svg";
+import eyeOffIcon from "../assets/images/icons/eye-off.svg";
 
 function LoginForm() {
     const { login } = useAuth();
@@ -50,9 +51,10 @@ function LoginForm() {
                 setServerError("El usuario no tiene un rol válido.");
             }
         } catch (error) {
-            const message = error.response?.data?.message ||
-                "No se pudo iniciar sesión. Verifica tu email y contraseña.";
-           
+            const message = error.response?.data?.message
+                || (!error.response && "No se pudo conectar con el servidor.")
+                || "No se pudo iniciar sesión. Verifica tu email y contraseña.";
+
             setServerError(message);
         } finally {
             setLoading(false);
@@ -126,7 +128,11 @@ return (
                        : "Mostrar contraseña" 
                     }
                 >
-                    {showPassword ? "◉" : "👁"}
+                    <img
+                        className="toggle-password-icon"
+                        src={showPassword ? eyeOffIcon : eyeIcon}
+                        alt=""
+                    />
                 </button>
 
             </div>
@@ -135,15 +141,13 @@ return (
                 <span className="input-error">
                     {errors.password}
                 </span>
-            )}
-
-        </div>
-
-        {serverError && (
+            )} 
+            {serverError && (
             <div className="login-error">
                 {serverError}
             </div>
-        )}
+            )}
+        </div>
 
         <button className="login-button" type="submit" disabled={loading}>
             {loading ? "..." : "LOGIN"}
