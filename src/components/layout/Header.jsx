@@ -1,5 +1,4 @@
 import { useLocation } from "react-router-dom";
-import useTheme from "../../hooks/useTheme";
 import "../../styles/layout/header.scss";
 
 const PAGE_HEADERS = {
@@ -75,9 +74,8 @@ function MoonIcon() {
     );
 }
 
-function Header() {
+function Header({ theme, toggleTheme }) {
     const { pathname } = useLocation();
-    const { theme, toggleTheme } = useTheme();
     const page = PAGE_HEADERS[pathname];
     const isDark = theme === "dark";
 

@@ -24,10 +24,20 @@
   flex: 1;
   min-width: 0;
   min-height: 100svh;
+  position: relative;
+}
+
+.app-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .app-header {
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .app-content {
@@ -36,4 +46,6 @@
   flex: 1;
   overflow: auto;
   min-height: 0;
+  position: relative;
+  z-index: 1;
 }

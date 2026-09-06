@@ -49,7 +49,7 @@ $duration-normal: 250ms;
   --color-border: #E3E3E7;
   --color-border-corporate: #E3E3E7;
 
-  --shadow: 0 4px 8px rgba(15, 39, 68, 0.1);
+  --shadow: 0 4px 8px #959595;
 
   --color-success: #20A66A;
   --color-success-contrast: #E8F7F0;
@@ -62,7 +62,7 @@ $duration-normal: 250ms;
 @mixin dark-theme {
   color-scheme: dark;
 
-  --color-bg: #342F39;
+  --color-bg: #2D2931;
   --color-surface: #232125;
   --color-brand: #660CCB;
   --color-brand-contrast: #F1E8FC;
@@ -75,7 +75,7 @@ $duration-normal: 250ms;
   --color-border: #2F2F30;
   --color-border-corporate: #342F39;
 
-  --shadow: 0 4px 8px rgba(15, 39, 68, 0.1);
+  --shadow: 0 4px 8px #303030;
 
   --color-success: #20A66A;
   --color-success-contrast: #E8F7F0;
