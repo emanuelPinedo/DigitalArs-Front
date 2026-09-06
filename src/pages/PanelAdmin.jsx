@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import UserService from '../services/UserService';
+import AccountService from '../services/AccountService';
 import '../styles/pages/paneladmin.scss';
 
 function PanelAdmin() {
@@ -17,14 +18,14 @@ function PanelAdmin() {
     // Filtros
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
-    const [roleId, setRoleId] = useState('');
+    const [alias, setAlias] = useState('');
     const [isActive, setIsActive] = useState('');
 
     // Modal
     const [modalOpen, setModalOpen] = useState(false);
     const [modalType, setModalType] = useState('');
 
-    // Usuario seleccionado para editar/eliminar
+    // Usuario seleccionado
     const [selectedUser, setSelectedUser] = useState(null);
 
     // Formulario
@@ -38,23 +39,53 @@ function PanelAdmin() {
         isActive: true,
     });
 
+    /*
+     * ============================================================
+     * CARGAR USUARIOS + CUENTAS
+     * ============================================================
+     */
     const loadUsers = async () => {
         try {
             setLoading(true);
             setError('');
 
+            // Obtener usuarios
             const data = await UserService.getAll({
                 page,
                 pageSize,
                 name,
                 email,
-                roleId,
+                alias,
                 isActive,
             });
 
-            setUsers(data.items);
+            // Obtener todas las cuentas
+            const accounts = await AccountService.getAll();
+
+            /*
+             * Relacionamos:
+             *
+             * user.id
+             *       ↓
+             * account.userId
+             *
+             * Y agregamos balance al objeto usuario.
+             */
+            const usersWithBalance = data.items.map((user) => {
+                const account = accounts.find(
+                    (account) => account.userId === user.id
+                );
+
+                return {
+                    ...user,
+                    balance: account?.price ?? 0,
+                };
+            });
+
+            setUsers(usersWithBalance);
             setTotalPages(data.totalPages);
             setTotalItems(data.totalItems);
+
         } catch (err) {
             console.error(err);
             setError('No se pudieron cargar los usuarios.');
@@ -63,10 +94,20 @@ function PanelAdmin() {
         }
     };
 
+    /*
+     * ============================================================
+     * EFFECT
+     * ============================================================
+     */
     useEffect(() => {
         loadUsers();
     }, [page]);
 
+    /*
+     * ============================================================
+     * BUSCAR
+     * ============================================================
+     */
     const handleSearch = (event) => {
         event.preventDefault();
 
@@ -74,17 +115,26 @@ function PanelAdmin() {
         loadUsers();
     };
 
+    /*
+     * ============================================================
+     * LIMPIAR FILTROS
+     * ============================================================
+     */
     const handleClearFilters = () => {
         setName('');
         setEmail('');
-        setRoleId('');
+        setAlias('');
         setIsActive('');
         setPage(1);
 
-        // Cargamos directamente sin filtros
         loadUsersWithoutFilters();
     };
 
+    /*
+     * ============================================================
+     * CARGAR SIN FILTROS
+     * ============================================================
+     */
     const loadUsersWithoutFilters = async () => {
         try {
             setLoading(true);
@@ -95,9 +145,23 @@ function PanelAdmin() {
                 pageSize,
             });
 
-            setUsers(data.items);
+            const accounts = await AccountService.getAll();
+
+            const usersWithBalance = data.items.map((user) => {
+                const account = accounts.find(
+                    (account) => account.userId === user.id
+                );
+
+                return {
+                    ...user,
+                    balance: account?.price ?? 0,
+                };
+            });
+
+            setUsers(usersWithBalance);
             setTotalPages(data.totalPages);
             setTotalItems(data.totalItems);
+
         } catch (err) {
             console.error(err);
             setError('No se pudieron cargar los usuarios.');
@@ -106,6 +170,11 @@ function PanelAdmin() {
         }
     };
 
+    /*
+     * ============================================================
+     * CREAR USUARIO
+     * ============================================================
+     */
     const openCreateModal = () => {
         setSelectedUser(null);
 
@@ -123,6 +192,11 @@ function PanelAdmin() {
         setModalOpen(true);
     };
 
+    /*
+     * ============================================================
+     * EDITAR USUARIO
+     * ============================================================
+     */
     const openEditModal = (user) => {
         setSelectedUser(user);
 
@@ -140,18 +214,33 @@ function PanelAdmin() {
         setModalOpen(true);
     };
 
+    /*
+     * ============================================================
+     * ELIMINAR / DAR DE BAJA
+     * ============================================================
+     */
     const openDeleteModal = (user) => {
         setSelectedUser(user);
         setModalType('delete');
         setModalOpen(true);
     };
 
+    /*
+     * ============================================================
+     * CERRAR MODAL
+     * ============================================================
+     */
     const closeModal = () => {
         setModalOpen(false);
         setModalType('');
         setSelectedUser(null);
     };
 
+    /*
+     * ============================================================
+     * CAMBIAR FORMULARIO
+     * ============================================================
+     */
     const handleChange = (event) => {
         const { name, value, type, checked } = event.target;
 
@@ -161,6 +250,11 @@ function PanelAdmin() {
         }));
     };
 
+    /*
+     * ============================================================
+     * CREAR
+     * ============================================================
+     */
     const handleCreate = async (event) => {
         event.preventDefault();
 
@@ -178,8 +272,8 @@ function PanelAdmin() {
 
             closeModal();
 
-            // Refrescar tabla
             await loadUsers();
+
         } catch (err) {
             console.error(err);
 
@@ -191,6 +285,11 @@ function PanelAdmin() {
         }
     };
 
+    /*
+     * ============================================================
+     * EDITAR
+     * ============================================================
+     */
     const handleEdit = async (event) => {
         event.preventDefault();
 
@@ -208,8 +307,8 @@ function PanelAdmin() {
 
             closeModal();
 
-            // Refrescar tabla
             await loadUsers();
+
         } catch (err) {
             console.error(err);
 
@@ -221,6 +320,11 @@ function PanelAdmin() {
         }
     };
 
+    /*
+     * ============================================================
+     * DAR DE BAJA
+     * ============================================================
+     */
     const handleDelete = async () => {
         try {
             setError('');
@@ -229,22 +333,43 @@ function PanelAdmin() {
 
             closeModal();
 
-            // Refrescar tabla
             await loadUsers();
+
         } catch (err) {
             console.error(err);
             setError('No se pudo eliminar el usuario.');
         }
     };
 
+    /*
+     * ============================================================
+     * FORMATO SALDO
+     * ============================================================
+     */
+    const formatBalance = (balance) => {
+        return new Intl.NumberFormat('es-AR', {
+            style: 'currency',
+            currency: 'ARS',
+            minimumFractionDigits: 2,
+        }).format(balance);
+    };
+
+    /*
+     * ============================================================
+     * RENDER
+     * ============================================================
+     */
     return (
         <main className="panel-admin">
 
+            {/* HEADER */}
             <header className="panel-admin__header">
                 <div>
                     <h1>Gestión de usuarios</h1>
+
                     <p>
-                        Crear, editar, consultar y administrar usuarios de DigitalArs.
+                        Crear, editar, consultar y administrar usuarios
+                        de DigitalArs.
                     </p>
                 </div>
 
@@ -257,13 +382,17 @@ function PanelAdmin() {
             </header>
 
 
-            {/* Filtros */}
+            {/* ====================================================
+                FILTROS
+            ==================================================== */}
+
             <section className="users-filters">
 
                 <form onSubmit={handleSearch}>
 
                     <div className="users-filters__fields">
 
+                        {/* NOMBRE Y EMAIL */}
                         <div className="form-field">
                             <label htmlFor="name">
                                 Nombre
@@ -273,12 +402,15 @@ function PanelAdmin() {
                                 id="name"
                                 type="text"
                                 value={name}
-                                onChange={(event) => setName(event.target.value)}
+                                onChange={(event) =>
+                                    setName(event.target.value)
+                                }
                                 placeholder="Buscar por nombre"
                             />
                         </div>
 
 
+                        {/* EMAIL */}
                         <div className="form-field">
                             <label htmlFor="email">
                                 Email
@@ -288,28 +420,33 @@ function PanelAdmin() {
                                 id="email"
                                 type="text"
                                 value={email}
-                                onChange={(event) => setEmail(event.target.value)}
+                                onChange={(event) =>
+                                    setEmail(event.target.value)
+                                }
                                 placeholder="Buscar por email"
                             />
                         </div>
 
 
+                        {/* ALIAS */}
                         <div className="form-field">
-                            <label htmlFor="roleId">
-                                Rol
+                            <label htmlFor="alias">
+                                Alias
                             </label>
 
                             <input
-                                id="roleId"
-                                type="number"
-                                min="1"
-                                value={roleId}
-                                onChange={(event) => setRoleId(event.target.value)}
-                                placeholder="ID del rol"
+                                id="alias"
+                                type="text"
+                                value={alias}
+                                onChange={(event) =>
+                                    setAlias(event.target.value)
+                                }
+                                placeholder="Buscar por alias"
                             />
                         </div>
 
 
+                        {/* ESTADO */}
                         <div className="form-field">
                             <label htmlFor="isActive">
                                 Estado
@@ -318,7 +455,9 @@ function PanelAdmin() {
                             <select
                                 id="isActive"
                                 value={isActive}
-                                onChange={(event) => setIsActive(event.target.value)}
+                                onChange={(event) =>
+                                    setIsActive(event.target.value)
+                                }
                             >
                                 <option value="">
                                     Todos
@@ -337,6 +476,7 @@ function PanelAdmin() {
                     </div>
 
 
+                    {/* ACCIONES FILTROS */}
                     <div className="users-filters__actions">
 
                         <button type="submit">
@@ -358,7 +498,7 @@ function PanelAdmin() {
             </section>
 
 
-            {/* Mensaje de error */}
+            {/* ERROR */}
             {error && (
                 <div className="panel-admin__error">
                     {error}
@@ -366,12 +506,16 @@ function PanelAdmin() {
             )}
 
 
-            {/* Tabla */}
+            {/* ====================================================
+                TABLA
+            ==================================================== */}
+
             <section className="users-table-container">
 
                 <div className="users-table-header">
                     <div>
                         <h2>Usuarios</h2>
+
                         <span>
                             {totalItems} usuario(s)
                         </span>
@@ -379,27 +523,30 @@ function PanelAdmin() {
                 </div>
 
 
+                {/* LOADING */}
                 {loading ? (
+
                     <div className="users-table__message">
                         Cargando usuarios...
                     </div>
+
                 ) : users.length === 0 ? (
+
                     <div className="users-table__message">
                         No se encontraron usuarios.
                     </div>
+
                 ) : (
+
                     <div className="table-wrapper">
 
                         <table className="users-table">
 
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Email</th>
-                                    <th>DNI</th>
+                                    <th>Usuario</th>
                                     <th>Alias</th>
-                                    <th>Rol</th>
+                                    <th>Saldo</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -408,32 +555,32 @@ function PanelAdmin() {
                             <tbody>
 
                                 {users.map((user) => (
+
                                     <tr key={user.id}>
 
-                                        <td>
-                                            {user.id}
-                                        </td>
-
+                                        {/* USUARIO */}
                                         <td>
                                             {user.fullName}
+                                            <br />
+                                            <span className="users-table__email">
+                                                {user.email}
+                                            </span>
                                         </td>
 
-                                        <td>
-                                            {user.email}
-                                        </td>
 
-                                        <td>
-                                            {user.dni}
-                                        </td>
-
+                                        {/* ALIAS */}
                                         <td>
                                             {user.alias}
                                         </td>
 
-                                        <td>
-                                            Rol {user.roleId}
+
+                                        {/* SALDO */}
+                                        <td className="users-table__balance">
+                                            {formatBalance(user.balance)}
                                         </td>
 
+
+                                        {/* ESTADO */}
                                         <td>
                                             <span
                                                 className={
@@ -448,6 +595,8 @@ function PanelAdmin() {
                                             </span>
                                         </td>
 
+
+                                        {/* ACCIONES */}
                                         <td>
 
                                             <div className="table-actions">
@@ -461,6 +610,7 @@ function PanelAdmin() {
                                                 </button>
 
                                                 {user.isActive && (
+
                                                     <button
                                                         className="delete-button"
                                                         onClick={() =>
@@ -469,6 +619,7 @@ function PanelAdmin() {
                                                     >
                                                         Dar de baja
                                                     </button>
+
                                                 )}
 
                                             </div>
@@ -476,6 +627,7 @@ function PanelAdmin() {
                                         </td>
 
                                     </tr>
+
                                 ))}
 
                             </tbody>
@@ -483,16 +635,25 @@ function PanelAdmin() {
                         </table>
 
                     </div>
+
                 )}
 
 
-                {/* Paginación */}
+                {/* =================================================
+                    PAGINACIÓN
+                ================================================= */}
+
                 {totalPages > 0 && (
+
                     <div className="pagination">
 
                         <button
                             disabled={page === 1}
-                            onClick={() => setPage((previous) => previous - 1)}
+                            onClick={() =>
+                                setPage(
+                                    (previous) => previous - 1
+                                )
+                            }
                         >
                             Anterior
                         </button>
@@ -503,29 +664,42 @@ function PanelAdmin() {
 
                         <button
                             disabled={page === totalPages}
-                            onClick={() => setPage((previous) => previous + 1)}
+                            onClick={() =>
+                                setPage(
+                                    (previous) => previous + 1
+                                )
+                            }
                         >
                             Siguiente
                         </button>
 
                     </div>
+
                 )}
 
             </section>
 
 
-            {/* MODAL CREAR */}
+            {/* ====================================================
+                MODAL CREAR
+            ==================================================== */}
+
             {modalOpen && modalType === 'create' && (
+
                 <div className="modal-backdrop">
 
                     <div className="modal">
 
                         <div className="modal__header">
-                            <h2>Crear usuario</h2>
+
+                            <h2>
+                                Crear usuario
+                            </h2>
 
                             <button onClick={closeModal}>
                                 ×
                             </button>
+
                         </div>
 
 
@@ -534,7 +708,10 @@ function PanelAdmin() {
                             <div className="modal__body">
 
                                 <div className="form-field">
-                                    <label>Nombre completo</label>
+
+                                    <label>
+                                        Nombre completo
+                                    </label>
 
                                     <input
                                         name="fullName"
@@ -543,11 +720,15 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
                                 <div className="form-field">
-                                    <label>Email</label>
+
+                                    <label>
+                                        Email
+                                    </label>
 
                                     <input
                                         name="email"
@@ -556,11 +737,15 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
                                 <div className="form-field">
-                                    <label>Contraseña</label>
+
+                                    <label>
+                                        Contraseña
+                                    </label>
 
                                     <input
                                         name="password"
@@ -569,11 +754,15 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
                                 <div className="form-field">
-                                    <label>DNI</label>
+
+                                    <label>
+                                        DNI
+                                    </label>
 
                                     <input
                                         name="dni"
@@ -582,11 +771,15 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
                                 <div className="form-field">
-                                    <label>Alias</label>
+
+                                    <label>
+                                        Alias
+                                    </label>
 
                                     <input
                                         name="alias"
@@ -595,11 +788,15 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
                                 <div className="form-field">
-                                    <label>Rol ID</label>
+
+                                    <label>
+                                        Rol ID
+                                    </label>
 
                                     <input
                                         name="roleId"
@@ -609,6 +806,7 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
                             </div>
@@ -635,18 +833,25 @@ function PanelAdmin() {
                     </div>
 
                 </div>
+
             )}
 
 
-            {/* MODAL EDITAR */}
+            {/* ====================================================
+                MODAL EDITAR
+            ==================================================== */}
+
             {modalOpen && modalType === 'edit' && (
+
                 <div className="modal-backdrop">
 
                     <div className="modal">
 
                         <div className="modal__header">
 
-                            <h2>Editar usuario</h2>
+                            <h2>
+                                Editar usuario
+                            </h2>
 
                             <button onClick={closeModal}>
                                 ×
@@ -660,7 +865,10 @@ function PanelAdmin() {
                             <div className="modal__body">
 
                                 <div className="form-field">
-                                    <label>Nombre completo</label>
+
+                                    <label>
+                                        Nombre completo
+                                    </label>
 
                                     <input
                                         name="fullName"
@@ -669,11 +877,15 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
                                 <div className="form-field">
-                                    <label>Email</label>
+
+                                    <label>
+                                        Email
+                                    </label>
 
                                     <input
                                         name="email"
@@ -682,11 +894,15 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
                                 <div className="form-field">
-                                    <label>DNI</label>
+
+                                    <label>
+                                        DNI
+                                    </label>
 
                                     <input
                                         name="dni"
@@ -695,11 +911,15 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
                                 <div className="form-field">
-                                    <label>Alias</label>
+
+                                    <label>
+                                        Alias
+                                    </label>
 
                                     <input
                                         name="alias"
@@ -708,11 +928,15 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
                                 <div className="form-field">
-                                    <label>Rol ID</label>
+
+                                    <label>
+                                        Rol ID
+                                    </label>
 
                                     <input
                                         name="roleId"
@@ -722,6 +946,7 @@ function PanelAdmin() {
                                         onChange={handleChange}
                                         required
                                     />
+
                                 </div>
 
 
@@ -762,18 +987,25 @@ function PanelAdmin() {
                     </div>
 
                 </div>
+
             )}
 
 
-            {/* MODAL ELIMINAR */}
+            {/* ====================================================
+                MODAL ELIMINAR
+            ==================================================== */}
+
             {modalOpen && modalType === 'delete' && (
+
                 <div className="modal-backdrop">
 
                     <div className="modal modal--small">
 
                         <div className="modal__header">
 
-                            <h2>Dar de baja usuario</h2>
+                            <h2>
+                                Dar de baja usuario
+                            </h2>
 
                             <button onClick={closeModal}>
                                 ×
@@ -786,7 +1018,10 @@ function PanelAdmin() {
 
                             <p>
                                 ¿Estás seguro de que querés dar de baja a
-                                <strong> {selectedUser?.fullName}</strong>?
+                                <strong>
+                                    {' '}
+                                    {selectedUser?.fullName}
+                                </strong>?
                             </p>
 
                             <p className="modal__warning">
@@ -818,6 +1053,7 @@ function PanelAdmin() {
                     </div>
 
                 </div>
+
             )}
 
         </main>
