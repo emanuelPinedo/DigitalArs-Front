@@ -40,13 +40,43 @@
 }
 
 .account-data-card .card-body {
-  display: flex;
+  display: grid;
   flex-direction: column;
   gap: $space-2;
-  padding: $space-3;
+  padding: $space-4 $space-6 $space-4;
 }
 
-
 .account-data-card .card-tab {
-  width: min(400px, 50%);
+  width: min(400px, 60%);
+}
+
+.account-details-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid rgba(255, 255, 255, 0.6);
+  gap: $space-2;
+  padding: $space-2;
+}
+
+.account-details-row {
+  display: flex;
+  justify-content: space-between; 
+  align-items: baseline;
+
+  dt {
+    margin: 0;
+    color: #9a9a9a;
+  }
+
+  dd {
+    margin: 0;
+    color: #fff;
+    font-weight: 600;
+  }
+}
+
+.account-details-hint {
+  display: flex;
+  padding: $space-1;
+  color: #9a9a9a;
 }

@@ -1,17 +1,7 @@
 import Card from "../components/Card";
 import DepositForm from "../components/depositForm.jsx";
 import "../styles/pages/deposit.scss";
-
-
-function getAccountBalance(account) {
-    if (!account) {
-        return null;
-    }
-
-    const value = account.balance ?? account.availableBalance ?? account.price;
-
-    return Number.isFinite(Number(value)) ? Number(value) : null;
-}
+import AccountDetails from "../components/accountDetails.jsx";
 
 
 function Deposit() {
@@ -30,6 +20,7 @@ function Deposit() {
                     className="account-data-card"
                 >
                     <p className="dep"></p>
+                    <AccountDetails />
                 </Card>
             </div>
         </main>
