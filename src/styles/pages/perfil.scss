@@ -12,7 +12,7 @@
   flex: 1;
   min-height: 0;
 
-  gap: $space-5;
+  gap: $space-4;
 
   padding: $space-5 $space-7;
 
@@ -25,10 +25,10 @@
    ========================= */
 
 .profile-summary-card {
-  width: min(100%, 760px);
+  width: 100%;
 
   .card-body {
-    padding: $space-4 $space-5;
+    padding: $space-3 $space-4;
   }
 }
 
@@ -36,9 +36,9 @@
   display: flex;
   align-items: center;
 
-  gap: $space-4;
+  gap: $space-3;
 
-  min-height: 64px;
+  min-height: 48px;
 }
 
 .profile-summary__avatar {
@@ -48,15 +48,15 @@
 
   flex-shrink: 0;
 
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
 
   border-radius: $radius-full;
 
   background: var(--color-brand);
   color: var(--color-text-inverse);
 
-  font-size: $font-size-lg;
+  font-size: $font-size-md;
   font-weight: $font-weight-bold;
 }
 
@@ -72,7 +72,7 @@
 .profile-summary__name {
   margin: 0;
 
-  font-size: $font-size-lg;
+  font-size: $font-size-md;
   font-weight: $font-weight-bold;
 
   color: var(--color-text);
@@ -85,7 +85,7 @@
 .profile-summary__email {
   margin: 0;
 
-  font-size: $font-size-sm;
+  font-size: $font-size-xs;
   color: var(--color-text-muted);
 
   overflow: hidden;
@@ -99,21 +99,25 @@
    ========================= */
 
 .profile-form-card {
-  width: min(100%, 760px);
+  width: 100%;
+
+  .card-body {
+    padding: $space-4;
+  }
 }
 
 .profile-page form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 
-  gap: $space-5;
+  gap: $space-3 $space-4;
 }
 
 .profile-page form > div {
   display: flex;
   flex-direction: column;
 
-  gap: $space-2;
+  gap: 4px;
 
   min-width: 0;
 }
@@ -122,7 +126,7 @@
   font-size: $font-size-xs;
   font-weight: $font-weight-bold;
 
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 
   color: var(--color-text-muted);
@@ -130,7 +134,7 @@
 
 .profile-page input {
   width: 100%;
-  height: 48px;
+  height: 40px;
 
   padding: 0 $space-3;
 
@@ -158,21 +162,16 @@
    ========================= */
 
 .profile-form-actions {
-  display: flex;
-  justify-content: flex-end;
-
-  gap: $space-3;
-
   grid-column: 1 / -1;
+
+  margin-top: $space-1;
 }
 
 .profile-page button[type='submit'] {
-  min-width: 170px;
+  width: 100%;
   height: 44px;
 
-  padding: 0 $space-5;
-
-  border: 1px solid var(--color-brand);
+  border: none;
   border-radius: $radius-full;
 
   background: var(--color-brand);
@@ -198,11 +197,11 @@
    ========================= */
 
 .profile-page > p.profile-message {
-  width: min(100%, 760px);
+  width: 100%;
 
   margin: 0;
 
-  padding: $space-3 $space-4;
+  padding: $space-2 $space-3;
 
   border-radius: $radius-sm;
 
@@ -240,15 +239,11 @@
     grid-template-columns: 1fr;
   }
 
-  .profile-summary {
-    gap: $space-3;
-  }
-
   .profile-summary__avatar {
-    width: 56px;
-    height: 56px;
+    width: 44px;
+    height: 44px;
 
-    font-size: $font-size-md;
+    font-size: $font-size-sm;
   }
 }
 
@@ -266,13 +261,5 @@
   .profile-summary__name,
   .profile-summary__email {
     white-space: normal;
-  }
-
-  .profile-form-actions {
-    justify-content: stretch;
-  }
-
-  .profile-page button[type='submit'] {
-    width: 100%;
   }
 }
