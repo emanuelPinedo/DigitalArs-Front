@@ -1,0 +1,53 @@
+@use '../tokens' as *;
+
+.deposit-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: $space-5 $space-7;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.deposit-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 640px);
+  gap: $space-4;
+  align-items: start;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.new-deposit-card .card-tab {
+  width: min(400px, 100%);
+}
+
+.account-data-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(20px, 120px);
+  gap: $space-6;
+  align-items: start;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.deposit-card .card-tab {
+  width: min(400px, 60%);
+}
+
+.account-data-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-3;
+}
+
+
+.account-data-card .card-tab {
+  width: min(400px, 50%);
+}
