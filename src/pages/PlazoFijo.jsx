@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import Card from "../components/Card";
 import FixedDepositForm from "../components/FixedDepositForm";
-import api from "../services/api";
 import FixedDepositService from "../services/FixedDepositService";
 import { getApiErrorMessage } from "../utils/apiError";
+import useRealtime from "../hooks/useRealtime";
 import "../styles/pages/plazo-fijo.scss";
 
 const STATUS_LABELS = {
@@ -77,40 +77,18 @@ function getStatusClass(status) {
     return "";
 }
 
-function getAccountBalance(account) {
-    if (!account) {
-        return null;
-    }
-
-    const value = account.balance ?? account.availableBalance ?? account.price;
-
-    return Number.isFinite(Number(value)) ? Number(value) : null;
-}
-
 function PlazoFijo() {
-    const [account, setAccount] = useState(null);
-    const [balanceLoading, setBalanceLoading] = useState(true);
-    const [balanceError, setBalanceError] = useState("");
+    const {
+        balance,
+        accountLoading: balanceLoading,
+        accountError: balanceError,
+        refreshAccount,
+        lastUpdatedAt,
+    } = useRealtime();
 
     const [deposits, setDeposits] = useState([]);
     const [listLoading, setListLoading] = useState(true);
     const [listError, setListError] = useState("");
-
-    const loadBalance = useCallback(async () => {
-        try {
-            setBalanceLoading(true);
-            setBalanceError("");
-            const response = await api.get("accounts/me");
-            setAccount(response.data);
-        } catch (error) {
-            setAccount(null);
-            setBalanceError(
-                getApiErrorMessage(error, "No pudimos cargar tu saldo.")
-            );
-        } finally {
-            setBalanceLoading(false);
-        }
-    }, []);
 
     const loadDeposits = useCallback(async () => {
         try {
@@ -134,59 +112,44 @@ function PlazoFijo() {
     useEffect(() => {
         let cancelled = false;
 
-        const loadPage = async () => {
-            const [accountResult, depositsResult] = await Promise.allSettled([
-                api.get("accounts/me"),
-                FixedDepositService.getMine(),
-            ]);
+        (async () => {
+            try {
+                const items = await FixedDepositService.getMine();
 
-            if (cancelled) {
-                return;
-            }
+                if (cancelled) {
+                    return;
+                }
 
-            if (accountResult.status === "fulfilled") {
-                setAccount(accountResult.value.data);
-                setBalanceError("");
-            } else {
-                setAccount(null);
-                setBalanceError(
-                    getApiErrorMessage(
-                        accountResult.reason,
-                        "No pudimos cargar tu saldo."
-                    )
-                );
-            }
-
-            if (depositsResult.status === "fulfilled") {
-                setDeposits(depositsResult.value);
+                setDeposits(items);
                 setListError("");
-            } else {
+            } catch (error) {
+                if (cancelled) {
+                    return;
+                }
+
                 setDeposits([]);
                 setListError(
                     getApiErrorMessage(
-                        depositsResult.reason,
+                        error,
                         "No pudimos cargar tus plazos fijos."
                     )
                 );
+            } finally {
+                if (!cancelled) {
+                    setListLoading(false);
+                }
             }
-
-            setBalanceLoading(false);
-            setListLoading(false);
-        };
-
-        loadPage();
+        })();
 
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [lastUpdatedAt]);
 
     const handleCreated = () => {
-        loadBalance();
         loadDeposits();
     };
 
-    const balance = getAccountBalance(account);
     const annualRate = deposits.find((item) => item.annualRate != null)?.annualRate
         ?? FixedDepositService.FALLBACK_ANNUAL_RATE;
 
@@ -210,7 +173,12 @@ function PlazoFijo() {
                     {balanceLoading ? (
                         <p className="plazo-balance-amount">Cargando...</p>
                     ) : balanceError ? (
-                        <p className="plazo-balance-error">{balanceError}</p>
+                        <p className="plazo-balance-error">
+                            {balanceError}{" "}
+                            <button type="button" onClick={refreshAccount}>
+                                Reintentar
+                            </button>
+                        </p>
                     ) : (
                         <p className="plazo-balance-amount">
                             {formatCurrency(balance ?? 0)}

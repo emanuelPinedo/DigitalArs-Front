@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import NotificationBell from "./NotificationBell";
 import "../../styles/layout/header.scss";
 
 const PAGE_HEADERS = {
@@ -109,18 +110,21 @@ function Header({ theme, toggleTheme }) {
                 <p>{page.subtitle}</p>
             </div>
 
-            <button
-                type="button"
-                className="theme-toggle"
-                onClick={toggleTheme}
-                aria-label={
-                    isDark
-                        ? "Cambiar a tema claro"
-                        : "Cambiar a tema oscuro"
-                }
-            >
-                {isDark ? <SunIcon /> : <MoonIcon />}
-            </button>
+            <div className="app-header-actions">
+                <NotificationBell />
+                <button
+                    type="button"
+                    className="theme-toggle"
+                    onClick={toggleTheme}
+                    aria-label={
+                        isDark
+                            ? "Cambiar a tema claro"
+                            : "Cambiar a tema oscuro"
+                    }
+                >
+                    {isDark ? <SunIcon /> : <MoonIcon />}
+                </button>
+            </div>
         </header>
     );
 }
