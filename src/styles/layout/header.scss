@@ -249,4 +249,11 @@
   .menu-toggle {
     display: flex;
   }
+  .app-header {
+    padding: $space-3;
+  }
+  .app-header-copy {
+    h2 {font-size: $font-size-md;}
+    p {display: none;}
+  }
 }

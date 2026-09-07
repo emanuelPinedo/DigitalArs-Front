@@ -121,11 +121,10 @@ function Header({ theme, toggleTheme, onMenuToggle }) {
                 >
                     <MenuButtonIcon />
                 </button>
-            </div>
-
-            <div className="app-header-copy">
-                <h2>{page.title}</h2>
-                <p>{page.subtitle}</p>
+                <div className="app-header-copy">
+                    <h2>{page.title}</h2>
+                    <p>{page.subtitle}</p>
+                </div>
             </div>
 
             <div className="app-header-actions">
