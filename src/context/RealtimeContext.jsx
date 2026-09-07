@@ -150,28 +150,55 @@ export function RealtimeProvider({ children }) {
             return undefined;
         }
 
-        const connection = new HubConnectionBuilder()
-            .withUrl(getHubUrl(), {
-                accessTokenFactory: () => localStorage.getItem('token') || token,
-            })
-            .withAutomaticReconnect()
-            .configureLogging(LogLevel.Warning)
-            .build();
+        let cancelled = false;
+        let connection;
 
-        connection.on('AccountUpdated', applyAccountEvent);
-        connectionRef.current = connection;
+        const connect = async () => {
+            if (cancelled) {
+                return;
+            }
 
-        connection
-            .start()
-            .catch((error) => {
+            connection = new HubConnectionBuilder()
+                .withUrl(getHubUrl(), {
+                    accessTokenFactory: () => localStorage.getItem('token') || token,
+                })
+                .withAutomaticReconnect()
+                .configureLogging(LogLevel.Warning)
+                .build();
+
+            connection.on('AccountUpdated', applyAccountEvent);
+            connectionRef.current = connection;
+
+            try {
+                await connection.start();
+
+                if (cancelled) {
+                    await connection.stop();
+                }
+            } catch (error) {
+                if (cancelled) {
+                    return;
+                }
+
                 console.error('No se pudo conectar al hub de cuenta.', error);
-            });
+            }
+        };
+
+        // Strict Mode monta, desmonta y vuelve a montar en el mismo tick.
+        // Diferir el start evita abortar la negociación del primer ciclo.
+        const timeoutId = window.setTimeout(connect, 0);
 
         return () => {
-            connection.off('AccountUpdated', applyAccountEvent);
-            connectionRef.current = null;
+            cancelled = true;
+            window.clearTimeout(timeoutId);
 
-            if (connection.state !== HubConnectionState.Disconnected) {
+            connection?.off('AccountUpdated', applyAccountEvent);
+
+            if (connectionRef.current === connection) {
+                connectionRef.current = null;
+            }
+
+            if (connection && connection.state !== HubConnectionState.Disconnected) {
                 connection.stop().catch(() => {});
             }
         };
