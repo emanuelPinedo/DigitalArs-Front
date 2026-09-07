@@ -2,10 +2,10 @@ import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Card from "../components/Card";
 import Counter from "../components/Counter";
-import api from "../services/api";
 import TransactionService from "../services/TransactionService";
 import { getApiErrorMessage } from "../utils/apiError";
 import useAuth from "../hooks/useAuth";
+import useRealtime from "../hooks/useRealtime";
 import "../styles/pages/dashboard.scss";
 
 import walletIcon from "../assets/images/icons/wallet.svg?raw";
@@ -22,24 +22,19 @@ const TYPE_LABELS = {
     Deposit: "Depósito",
     Transfer_In: "Transferencia recibida",
     Transfer_Out: "Transferencia enviada",
+    FixedTerm_Out: "Plazo fijo constituido",
+    FixedTerm_In: "Plazo fijo acreditado",
 };
-
-function getAccountBalance(account) {
-    if (!account) {
-        return null;
-    }
-
-    const value = account.balance ?? account.availableBalance ?? account.price;
-
-    return Number.isFinite(Number(value)) ? Number(value) : null;
-}
 
 function getAccountAlias(account, user) {
     return account?.alias || user?.alias || "";
 }
 
 function isIncome(type) {
-    return type === "Deposit" || type === "Transfer_In" || type === "TransferIn";
+    return type === "Deposit"
+        || type === "Transfer_In"
+        || type === "TransferIn"
+        || type === "FixedTerm_In";
 }
 
 function getTransactionIcon(type) {
@@ -74,23 +69,26 @@ function Icon({ svg }) {
 
 function Dashboard() {
     const { user } = useAuth();
-    const [account, setAccount] = useState(null);
+    const {
+        account,
+        balance,
+        accountLoading,
+        accountError,
+        refreshAccount,
+        lastUpdatedAt,
+    } = useRealtime();
     const [transactions, setTransactions] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+    const [transactionsLoading, setTransactionsLoading] = useState(true);
+    const [transactionsError, setTransactionsError] = useState("");
     const [balanceVisible, setBalanceVisible] = useState(true);
 
-    const loadDashboard = useCallback(async () => {
+    const loadTransactions = useCallback(async () => {
         try {
-            setLoading(true);
-            setError("");
+            const transactionsData = await TransactionService.getMine({
+                page: 1,
+                pageSize: 5,
+            });
 
-            const [accountResponse, transactionsData] = await Promise.all([
-                api.get("accounts/me"),
-                TransactionService.getMine({ page: 1, pageSize: 5 }),
-            ]);
-
-            setAccount(accountResponse.data);
             setTransactions(
                 Array.isArray(transactionsData?.items)
                     ? transactionsData.items
@@ -98,22 +96,69 @@ function Dashboard() {
                         ? transactionsData.slice(0, 5)
                         : []
             );
+            setTransactionsError("");
         } catch (loadError) {
             console.error(loadError);
-            setError(
+            setTransactions([]);
+            setTransactionsError(
                 getApiErrorMessage(
                     loadError,
-                    "No pudimos cargar la información de tu cuenta."
+                    "No pudimos cargar tus movimientos recientes."
                 )
             );
         } finally {
-            setLoading(false);
+            setTransactionsLoading(false);
         }
     }, []);
 
     useEffect(() => {
-        loadDashboard();
-    }, [loadDashboard]);
+        let cancelled = false;
+
+        (async () => {
+            try {
+                const transactionsData = await TransactionService.getMine({
+                    page: 1,
+                    pageSize: 5,
+                });
+
+                if (cancelled) {
+                    return;
+                }
+
+                setTransactions(
+                    Array.isArray(transactionsData?.items)
+                        ? transactionsData.items
+                        : Array.isArray(transactionsData)
+                            ? transactionsData.slice(0, 5)
+                            : []
+                );
+                setTransactionsError("");
+            } catch (loadError) {
+                if (cancelled) {
+                    return;
+                }
+
+                console.error(loadError);
+                setTransactions([]);
+                setTransactionsError(
+                    getApiErrorMessage(
+                        loadError,
+                        "No pudimos cargar tus movimientos recientes."
+                    )
+                );
+            } finally {
+                if (!cancelled) {
+                    setTransactionsLoading(false);
+                }
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [lastUpdatedAt]);
+
+    const loading = accountLoading && !account;
 
     if (loading) {
         return (
@@ -126,12 +171,15 @@ function Dashboard() {
         );
     }
 
-    if (error) {
+    if (accountError && !account) {
         return (
             <main className="dashboard-page">
                 <div className="dashboard-error">
-                    <p>{error}</p>
-                    <button type="button" onClick={loadDashboard}>
+                    <p>{accountError}</p>
+                    <button type="button" onClick={() => {
+                        refreshAccount();
+                        loadTransactions();
+                    }}>
                         Reintentar
                     </button>
                 </div>
@@ -139,7 +187,6 @@ function Dashboard() {
         );
     }
 
-    const balance = getAccountBalance(account);
     const alias = getAccountAlias(account, user);
 
     return (
@@ -205,7 +252,11 @@ function Dashboard() {
             </section>
 
             <Card titleName="Actividad reciente" className="dashboard-activity-card">
-                {transactions.length === 0 ? (
+                {transactionsLoading && transactions.length === 0 ? (
+                    <p className="dashboard-empty">Cargando movimientos...</p>
+                ) : transactionsError ? (
+                    <p className="dashboard-empty">{transactionsError}</p>
+                ) : transactions.length === 0 ? (
                     <p className="dashboard-empty">
                         Todavía no tenés movimientos.
                     </p>

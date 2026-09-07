@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import TransferForm from "../components/TransferForm";
-import api from "../services/api";
-import { getApiErrorMessage } from "../utils/apiError";
+import useRealtime from "../hooks/useRealtime";
 import "../styles/pages/transfer.scss";
 
 function formatCurrency(value) {
@@ -12,58 +10,13 @@ function formatCurrency(value) {
     }).format(value);
 }
 
-function getAccountBalance(account) {
-    if (!account) {
-        return null;
-    }
-
-    const value = account.balance ?? account.availableBalance ?? account.price;
-
-    return Number.isFinite(Number(value)) ? Number(value) : null;
-}
-
 function Transferencias() {
-    const [account, setAccount] = useState(null);
-    const [balanceLoading, setBalanceLoading] = useState(true);
-    const [balanceError, setBalanceError] = useState("");
-
-    useEffect(() => {
-        let cancelled = false;
-
-        const loadBalance = async () => {
-            try {
-                setBalanceLoading(true);
-                setBalanceError("");
-                const response = await api.get("accounts/me");
-
-                if (!cancelled) {
-                    setAccount(response.data);
-                }
-            } catch (error) {
-                if (!cancelled) {
-                    setAccount(null);
-                    setBalanceError(
-                        getApiErrorMessage(
-                            error,
-                            "No pudimos cargar tu saldo."
-                        )
-                    );
-                }
-            } finally {
-                if (!cancelled) {
-                    setBalanceLoading(false);
-                }
-            }
-        };
-
-        loadBalance();
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
-
-    const balance = getAccountBalance(account);
+    const {
+        balance,
+        accountLoading: balanceLoading,
+        accountError: balanceError,
+        refreshAccount,
+    } = useRealtime();
 
     return (
         <main className="transfer-page">
@@ -81,7 +34,12 @@ function Transferencias() {
                     {balanceLoading ? (
                         <p className="transfer-balance-amount">Cargando...</p>
                     ) : balanceError ? (
-                        <p className="transfer-balance-error">{balanceError}</p>
+                        <p className="transfer-balance-error">
+                            {balanceError}{" "}
+                            <button type="button" onClick={refreshAccount}>
+                                Reintentar
+                            </button>
+                        </p>
                     ) : (
                         <p className="transfer-balance-amount">
                             {formatCurrency(balance ?? 0)}

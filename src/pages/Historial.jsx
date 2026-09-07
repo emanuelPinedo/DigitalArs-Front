@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import TransactionService from '../services/TransactionService';
 import { getApiErrorMessage } from '../utils/apiError';
+import useRealtime from '../hooks/useRealtime';
 import '../styles/pages/historial.scss';
 
 const MIN_PAGE_SIZE = 1;
@@ -50,6 +51,8 @@ const TYPE_LABELS = {
     Deposit: 'Depósito',
     Transfer_In: 'Transferencia recibida',
     Transfer_Out: 'Transferencia enviada',
+    FixedTerm_Out: 'Plazo fijo constituido',
+    FixedTerm_In: 'Plazo fijo acreditado',
 };
 
 function formatCurrency(value) {
@@ -70,7 +73,7 @@ function formatDate(value) {
 }
 
 function isIncome(type) {
-    return type === 'Deposit' || type === 'Transfer_In';
+    return type === 'Deposit' || type === 'Transfer_In' || type === 'FixedTerm_In';
 }
 
 function hasActiveFilters(filters) {
@@ -87,6 +90,7 @@ function parseAmount(value) {
 }
 
 function Historial() {
+    const { lastUpdatedAt } = useRealtime();
     const [formFilters, setFormFilters] = useState(EMPTY_FILTERS);
     const [appliedFilters, setAppliedFilters] = useState(EMPTY_FILTERS);
     const [filterError, setFilterError] = useState('');
@@ -175,8 +179,61 @@ function Historial() {
     }, [appliedFilters, page, pageSize]);
 
     useEffect(() => {
-        loadHistory();
-    }, [loadHistory]);
+        if (!pageSize) {
+            return undefined;
+        }
+
+        let cancelled = false;
+
+        (async () => {
+            try {
+                const data = await TransactionService.getMine({
+                    page,
+                    pageSize,
+                    type: appliedFilters.type || undefined,
+                    fromDate: appliedFilters.fromDate || undefined,
+                    toDate: appliedFilters.toDate || undefined,
+                    minAmount: appliedFilters.minAmount === ''
+                        ? undefined
+                        : Number(appliedFilters.minAmount),
+                    maxAmount: appliedFilters.maxAmount === ''
+                        ? undefined
+                        : Number(appliedFilters.maxAmount),
+                });
+
+                if (cancelled) {
+                    return;
+                }
+
+                setItems(Array.isArray(data?.items) ? data.items : []);
+                setTotalItems(data?.totalItems ?? 0);
+                setTotalPages(data?.totalPages ?? 0);
+                setError('');
+            } catch (loadError) {
+                if (cancelled) {
+                    return;
+                }
+
+                setItems([]);
+                setTotalItems(0);
+                setTotalPages(0);
+                setError(
+                    getApiErrorMessage(
+                        loadError,
+                        'No se pudo cargar el historial. Intentá de nuevo.'
+                    )
+                );
+            } finally {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [appliedFilters, lastUpdatedAt, page, pageSize]);
 
     const handleFilterChange = (event) => {
         const { name, value } = event.target;

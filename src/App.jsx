@@ -10,6 +10,7 @@ import PanelAdmin from './pages/PanelAdmin'
 import NotFound from './pages/NotFound'
 import Layout from './components/layout/Layout'
 import ProtectedRoutes from './components/ProtectedRoutes'
+import { RealtimeProvider } from './context/RealtimeContext.jsx'
 
 function App() {
   return (
@@ -28,7 +29,9 @@ function App() {
         <Route
           element={
             <ProtectedRoutes>
-              <Layout />
+              <RealtimeProvider>
+                <Layout />
+              </RealtimeProvider>
             </ProtectedRoutes>
           }
         >
