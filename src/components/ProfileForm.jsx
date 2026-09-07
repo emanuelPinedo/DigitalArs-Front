@@ -1,4 +1,3 @@
-
 function ProfileForm({ formData, setFormData, handleSubmit }) {
     return (
         <form onSubmit={handleSubmit}>
@@ -109,12 +108,13 @@ function ProfileForm({ formData, setFormData, handleSubmit }) {
                 />
             </div>
 
-            <button type="submit">
-                Guardar cambios
-            </button>
+            <div className="profile-form-actions">
+                <button type="submit">
+                    Guardar cambios
+                </button>
+            </div>
         </form>
     );
 }
 
 export default ProfileForm;
-

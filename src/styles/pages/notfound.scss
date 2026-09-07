@@ -1,0 +1,159 @@
+@use '../tokens' as *;
+
+
+/* =========================
+   CONTENEDOR
+   ========================= */
+
+.not-found {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 100vh;
+
+  padding: var(--space-5);
+
+  background: var(--color-bg);
+}
+
+
+/* =========================
+   CARD
+   ========================= */
+
+.not-found__card {
+  width: min(480px, 100%);
+
+  padding: var(--space-6);
+
+  text-align: center;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow);
+
+  h1 {
+    margin: var(--space-3) 0 var(--space-2);
+
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+  }
+
+  p {
+    margin: 0 0 var(--space-5);
+
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+}
+
+
+/* =========================
+   CÓDIGO 404
+   ========================= */
+
+.not-found__code {
+  display: inline-block;
+
+  font-size: 72px;
+  font-weight: var(--font-weight-bold);
+
+  line-height: 1;
+
+  background: linear-gradient(
+    135deg,
+    var(--color-brand),
+    var(--color-brand-hover, var(--color-brand))
+  );
+
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+
+/* =========================
+   BOTÓN
+   ========================= */
+
+.not-found__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding: 10px 24px;
+
+  border: none;
+  border-radius: var(--radius-sm);
+
+  background: var(--color-brand);
+  color: var(--color-text-inverse);
+
+  font-family: inherit;
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.not-found__button:hover {
+  opacity: 0.9;
+}
+
+.not-found__button:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: $breakpoint-md) {
+  .not-found__card {
+    padding: var(--space-5);
+  }
+
+  .not-found__code {
+    font-size: 60px;
+  }
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: $breakpoint-sm) {
+  .not-found {
+    padding: var(--space-4);
+  }
+
+  .not-found__card {
+    padding: var(--space-4);
+
+    border-radius: var(--radius-md);
+  }
+
+  .not-found__code {
+    font-size: 48px;
+  }
+
+  .not-found__card h1 {
+    font-size: var(--font-size-md);
+  }
+
+  .not-found__button {
+    width: 100%;
+  }
+}

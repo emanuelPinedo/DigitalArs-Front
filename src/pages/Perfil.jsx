@@ -118,37 +118,50 @@ function Perfil() {
         return <p className="profile-loading">Cargando perfil...</p>
     }
 
+    const initials = user?.fullName
+        ? user.fullName
+              .split(" ")
+              .filter(Boolean)
+              .slice(0, 2)
+              .map((part) => part[0].toUpperCase())
+              .join("")
+        : "?";
+
     return (
         <main className='profile-page'>
 
             {error && <p className="profile-message profile-message-error">{error}</p>}
             {success && <p className="profile-message profile-message-success">{success}</p>}
 
-            <Card className="dashboard-activity-card">
-                {user.length === 0 ? (
+            <Card className="profile-summary-card" title={false}>
+                {!user ? (
                     <p className="dashboard-empty">
                         No hay datos de usuario.
                     </p>
                 ) : (
-                    <ul className="dashboard-activity-list">
-                        
-                        <p>{user.fullName}</p>
-                                             
-                        <p>{user.email}</p>
-                        
-                    </ul>
-                )
-                }
+                    <div className="profile-summary">
+                        <span className="profile-summary__avatar">
+                            {initials}
+                        </span>
+
+                        <div className="profile-summary__info">
+                            <p className="profile-summary__name">
+                                {user.fullName}
+                            </p>
+                            <p className="profile-summary__email">
+                                {user.email}
+                            </p>
+                        </div>
+                    </div>
+                )}
             </Card>
 
-            <Card titleName="Datos Personales" className="dashboard-activity-card">
-                
+            <Card titleName="Datos personales" className="profile-form-card">
                 <ProfileForm
                     formData={formData}
                     setFormData={setFormData}
                     handleSubmit={handleSubmit}
                 />
-
             </Card>
 
         </main>
