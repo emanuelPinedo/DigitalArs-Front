@@ -197,7 +197,7 @@ function PanelAdmin() {
     // CREAR USUARIO
     // =========================
 
-    const handleCreate = async () => {
+    const onCreate = async () => {
 
         try {
 
@@ -223,7 +223,7 @@ function PanelAdmin() {
     // EDITAR USUARIO
     // =========================
 
-    const handleEdit = async () => {
+    const onEdit = async () => {
 
         try {
 
@@ -252,7 +252,7 @@ function PanelAdmin() {
     // ELIMINAR USUARIO
     // =========================
 
-    const handleDelete = async () => {
+    const onDelete = async () => {
 
         try {
 
@@ -347,9 +347,9 @@ function PanelAdmin() {
                 formData={formData}
                 setFormData={setFormData}
                 onClose={closeModal}
-                onCreate={handleCreate}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
+                onCreate={onCreate}
+                onEdit={onEdit}
+                onDelete={onDelete}
             />
 
         </main>

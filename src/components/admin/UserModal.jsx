@@ -35,7 +35,10 @@ function UserModal({
                         <h2>Crear usuario</h2>
                         <button type="button" onClick={onClose} aria-label="Cerrar">×</button>
                     </div>
-                    <form onSubmit={onCreate}>
+                    <form onSubmit={(event) => {
+                        event.preventDefault();
+                        onCreate();
+                    }}>
                         <div className="modal__body">
                             <div className="form-field">
                                 <label htmlFor="create-fullName">Nombre completo</label>
@@ -58,8 +61,12 @@ function UserModal({
                                 <input id="create-alias" name="alias" type="text" value={formData.alias} onChange={handleChange} required />
                             </div>
                             <div className="form-field">
-                                <label htmlFor="create-roleId">Rol ID</label>
-                                <input id="create-roleId" name="roleId" type="number" min="1" value={formData.roleId} onChange={handleChange} required />
+                                <label htmlFor="create-roleId">Rol</label>
+                                <select id="create-roleId" name="roleId" value={formData.roleId} onChange={handleChange} required>
+                                    <option value="" disabled>Seleccionar rol</option>
+                                    <option value="1">Admin</option>
+                                    <option value="2">User</option>
+                                </select>
                             </div>
                         </div>
                         <div className="modal__actions">
@@ -80,7 +87,10 @@ function UserModal({
                         <h2>Editar usuario</h2>
                         <button type="button" onClick={onClose} aria-label="Cerrar">×</button>
                     </div>
-                    <form onSubmit={onEdit}>
+                    <form onSubmit={(event) => {
+                        event.preventDefault();
+                        onEdit();
+                    }}>
                         <div className="modal__body">
                             <div className="form-field">
                                 <label htmlFor="edit-fullName">Nombre completo</label>
@@ -99,8 +109,12 @@ function UserModal({
                                 <input id="edit-alias" name="alias" type="text" value={formData.alias} onChange={handleChange} required />
                             </div>
                             <div className="form-field">
-                                <label htmlFor="edit-roleId">Rol ID</label>
-                                <input id="edit-roleId" name="roleId" type="number" min="1" value={formData.roleId} onChange={handleChange} required />
+                                <label htmlFor="edit-roleId">Rol</label>
+                                <select id="edit-roleId" name="roleId" value={formData.roleId} onChange={handleChange} required>
+                                    <option value="" disabled>Seleccionar rol</option>
+                                    <option value="1">Admin</option>
+                                    <option value="2">User</option>
+                                </select>
                             </div>
                             <label className="checkbox-field" htmlFor="edit-isActive">
                                 <input id="edit-isActive" name="isActive" type="checkbox" checked={formData.isActive} onChange={handleChange} />
