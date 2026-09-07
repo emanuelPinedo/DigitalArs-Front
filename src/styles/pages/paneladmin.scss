@@ -19,6 +19,9 @@
   padding: var(--space-6);
 
   color: var(--color-text);
+
+  min-width: 0;
+  overflow-x: hidden;
 }
 
 
