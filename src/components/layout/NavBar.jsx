@@ -22,7 +22,7 @@ function NavIcon({ svg }) {
     );
 }
 
-function Navbar() {
+function Navbar({ isOpen, onClose }) {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -33,7 +33,7 @@ function Navbar() {
 
     console.log(user);
     return (
-        <nav className="navbar">
+        <nav className={'navbar ' + (isOpen ? "navbar--open" : "").trim()}>
             <Link to="/dashboard" className="navbar-logo">
                <img src={logo} alt="DigitalArs"/>
                <h1>Digital<span>Ars</span></h1>
