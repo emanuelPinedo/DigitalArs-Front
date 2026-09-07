@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import AuthService from "../services/AuthService";
+import UserService from "../services/UserService";
 
 const AuthContext = createContext();
 
@@ -11,8 +12,7 @@ const decodeToken = (token) => {
     );
 
     return JSON.parse(decodedPayload);
-
-}
+};
 
 export function AuthProvider({ children }) {
     const [token, setToken] = useState(
@@ -46,14 +46,22 @@ export function AuthProvider({ children }) {
         };
 
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(userData));
+
+        const userProfile = await UserService.getMe();
+
+        const completeUser = {
+            ...userData,
+            ...userProfile
+        };
+
+        localStorage.setItem("user", JSON.stringify(completeUser));
 
         setToken(data.token);
-        setUser(userData);
+        setUser(completeUser);
 
         return {
             ...data,
-            user: userData,
+            user: completeUser,
         };
     };
 
@@ -63,6 +71,11 @@ export function AuthProvider({ children }) {
 
         setToken(null);
         setUser(null);
+    };
+
+    const updateUser = (userData) => {
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
     };
 
     const isAuthenticated = Boolean(token);
@@ -75,6 +88,7 @@ export function AuthProvider({ children }) {
             isAuthenticated,
             login,
             logout,
+            updateUser
         }}
         >
             {children}

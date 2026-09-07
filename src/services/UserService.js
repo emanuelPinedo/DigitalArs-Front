@@ -62,6 +62,15 @@ const remove = async (id) => {
     await api.delete(`users/${id}`);
 };
 
+const getMe = async () => {
+    const response = await api.get('users/me');
+    return response.data;
+};
+
+const updateMe = async (data) => {
+    await api.put('users/me', data);
+};
+
 export default {
     searchByAlias,
     getAll,
@@ -69,4 +78,6 @@ export default {
     create,
     update,
     remove,
+    getMe,
+    updateMe
 };
