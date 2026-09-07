@@ -42,6 +42,12 @@ const getAll = async ({
     return response.data;
 };
 
+const getMe = async () => {
+    const response = await api.get('users/me');
+
+    return response.data;
+};
+
 const getById = async (id) => {
     const response = await api.get(`users/${id}`);
 
@@ -65,6 +71,7 @@ const remove = async (id) => {
 export default {
     searchByAlias,
     getAll,
+    getMe,
     getById,
     create,
     update,
