@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
+import NotificationBell from "./NotificationBell";
 import "../../styles/layout/header.scss";
+import menuIcon from "../../assets/images/icons/menu.svg?raw";
 
 const PAGE_HEADERS = {
     "/dashboard": {
@@ -78,6 +80,12 @@ function MoonIcon() {
     );
 }
 
+function MenuButtonIcon() {
+    return (
+        <span className="menu-button-icon" aria-hidden="true" dangerouslySetInnerHTML={{ __html: menuIcon }} />
+    );
+}
+
 function resolvePageHeader(pathname) {
     const normalized = (pathname || "/").replace(/\/+$/, "") || "/";
 
@@ -94,7 +102,7 @@ function resolvePageHeader(pathname) {
     return match ? PAGE_HEADERS[match] : null;
 }
 
-function Header({ theme, toggleTheme }) {
+function Header({ theme, toggleTheme, onMenuToggle }) {
     const { pathname } = useLocation();
     const page = resolvePageHeader(pathname) ?? {
         title: "DigitalArs",
@@ -104,23 +112,36 @@ function Header({ theme, toggleTheme }) {
 
     return (
         <header className="app-header">
-            <div className="app-header-copy">
-                <h2>{page.title}</h2>
-                <p>{page.subtitle}</p>
+            <div className="app-header-left">
+                <button
+                    type="button"
+                    className="menu-toggle"
+                    onClick={onMenuToggle}
+                    aria-label="Abrir menú"
+                >
+                    <MenuButtonIcon />
+                </button>
+                <div className="app-header-copy">
+                    <h2>{page.title}</h2>
+                    <p>{page.subtitle}</p>
+                </div>
             </div>
 
-            <button
-                type="button"
-                className="theme-toggle"
-                onClick={toggleTheme}
-                aria-label={
-                    isDark
-                        ? "Cambiar a tema claro"
-                        : "Cambiar a tema oscuro"
-                }
-            >
-                {isDark ? <SunIcon /> : <MoonIcon />}
-            </button>
+            <div className="app-header-actions">
+                <NotificationBell />
+                <button
+                    type="button"
+                    className="theme-toggle"
+                    onClick={toggleTheme}
+                    aria-label={
+                        isDark
+                            ? "Cambiar a tema claro"
+                            : "Cambiar a tema oscuro"
+                    }
+                >
+                    {isDark ? <SunIcon /> : <MoonIcon />}
+                </button>
+            </div>
         </header>
     );
 }

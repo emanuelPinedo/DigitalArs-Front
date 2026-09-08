@@ -1,17 +1,39 @@
-import { Link } from 'react-router-dom'
+import { useContext } from 'react';
+import { Link } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
+import '../styles/pages/notfound.scss';
 
 function NotFound() {
-  return (
-    <div>
-      <h1>404</h1>
-      <h2>Página no encontrada</h2>
-      <p>La página que estás buscando no existe.</p>
+    const { isAuthenticated } = useContext(AuthContext);
 
-      <Link to="/login">
-        Volver al inicio
-      </Link>
-    </div>
-  )
+    return (
+        <div className="not-found">
+
+            <div className="not-found__card">
+
+                <span className="not-found__code">
+                    404
+                </span>
+
+                <h1>
+                    Página no encontrada
+                </h1>
+
+                <p>
+                    La página que buscás no existe o fue movida.
+                </p>
+
+                <Link
+                    to={isAuthenticated ? '/dashboard' : '/login'}
+                    className="not-found__button"
+                >
+                    Volver
+                </Link>
+
+            </div>
+
+        </div>
+    );
 }
 
-export default NotFound
+export default NotFound;

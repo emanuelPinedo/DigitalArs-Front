@@ -1,0 +1,167 @@
+@use '../../tokens' as *;
+
+
+/* =========================
+   FILTROS
+   ========================= */
+
+.users-filters {
+  margin-bottom: var(--space-5);
+  padding: var(--space-5);
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow);
+}
+
+
+/* =========================
+   CAMPOS
+   ========================= */
+
+.users-filters__fields {
+  display: grid;
+
+  grid-template-columns: repeat(4, 1fr);
+
+  gap: var(--space-4);
+}
+
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+
+  label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-bold);
+  }
+
+  input,
+  select {
+    width: 100%;
+
+    min-height: 42px;
+
+    padding: 11px 12px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+
+    background: var(--color-surface);
+    color: var(--color-text);
+
+    outline: none;
+
+    font-family: inherit;
+
+    transition: border-color 0.2s ease;
+  }
+
+  input:focus,
+  select:focus {
+    border-color: var(--color-brand);
+  }
+}
+
+
+/* =========================
+   ACCIONES
+   ========================= */
+
+.users-filters__actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: var(--space-2);
+
+  margin-top: var(--space-4);
+
+  button {
+    min-height: 40px;
+
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: var(--radius-sm);
+
+    background: var(--color-brand);
+    color: var(--color-text-inverse);
+
+    cursor: pointer;
+
+    font-family: inherit;
+    font-weight: var(--font-weight-bold);
+
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  button:hover {
+    opacity: 0.9;
+  }
+
+  button:active {
+    transform: translateY(1px);
+  }
+}
+
+
+/* =========================
+   BOTÓN SECUNDARIO
+   ========================= */
+
+.secondary-button {
+  background: transparent !important;
+  color: var(--color-text) !important;
+
+  border: 1px solid var(--color-border) !important;
+}
+
+.secondary-button:hover {
+  border-color: var(--color-brand) !important;
+  color: var(--color-brand) !important;
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: $breakpoint-md) {
+  .users-filters__fields {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: $breakpoint-sm) {
+  .users-filters {
+    padding: var(--space-4);
+  }
+
+  .users-filters__fields {
+    grid-template-columns: 1fr;
+
+    gap: var(--space-3);
+  }
+
+  .users-filters__actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}

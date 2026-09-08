@@ -76,7 +76,6 @@
   margin: $space-1 0 0;
   font-size: $font-size-xs;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--color-text-muted);
 }
 
@@ -87,6 +86,7 @@
 }
 
 .dashboard-action {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -248,15 +248,39 @@
 }
 
 @media (max-width: $breakpoint-md) {
+  .dashboard-actions {
+    p {display: none;}
+
+    &:hover {
+      p {display: block;}
+    }
+  }
+  .dashboard-actions {
+    justify-content: center;
+    gap: $space-6;
+
+  }
+  .dashboard-action {
+    padding: 0 $space-4;
+    min-width: 0; 
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
   .dashboard-page {
     padding: $space-4;
   }
-
-  .dashboard-action {
-    width: 100%;
-  }
-
   .dashboard-balance-amount {
     font-size: $font-size-xl;
+  }
+
+  .dashboard-actions {
+    gap: $space-3;
+  }
+  
+  .dashboard-transaction {
+    .dashboard-transaction-icon { display: none; }
+    .dashboard-transaction-info strong {font-size: $font-size-xs;}
+    .dashboard-transaction-info span {display: none;}
   }
 }

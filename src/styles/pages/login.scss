@@ -148,3 +148,30 @@
     }
   }
 }
+
+@media (max-width: $breakpoint-md) {
+  .login-page {
+    flex-direction: column;
+  
+    .login-visual {
+      width: 100%;
+      display: none;
+    }
+    .login-form-container {
+      width: 100%;
+      flex: 1;
+    }
+    .login-form-container {
+      padding-top: 0;
+    }
+    .login-logo {
+      margin: 20px 0;
+      img {
+        width: 150px;
+      }
+    }
+    .login-form {
+      gap: $space-4;
+    }
+  }
+}

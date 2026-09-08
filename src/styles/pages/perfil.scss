@@ -1,0 +1,265 @@
+@use '../tokens' as *;
+
+
+/* =========================
+   PÁGINA
+   ========================= */
+
+.profile-page {
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
+  min-height: 0;
+
+  gap: $space-4;
+
+  padding: $space-5 $space-7;
+
+  color: var(--color-text);
+}
+
+
+/* =========================
+   TARJETA RESUMEN
+   ========================= */
+
+.profile-summary-card {
+  width: 100%;
+
+  .card-body {
+    padding: $space-3 $space-4;
+  }
+}
+
+.profile-summary {
+  display: flex;
+  align-items: center;
+
+  gap: $space-3;
+
+  min-height: 48px;
+}
+
+.profile-summary__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 48px;
+  height: 48px;
+
+  border-radius: $radius-full;
+
+  background: var(--color-brand);
+  color: var(--color-text-inverse);
+
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+}
+
+.profile-summary__info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.profile-summary__name {
+  margin: 0;
+
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+
+  color: var(--color-text);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-summary__email {
+  margin: 0;
+
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================
+   FORMULARIO
+   ========================= */
+
+.profile-form-card {
+  width: 100%;
+
+  .card-body {
+    padding: $space-4;
+  }
+}
+
+.profile-page form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: $space-3 $space-4;
+}
+
+.profile-page form > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  min-width: 0;
+}
+
+.profile-page label {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  color: var(--color-text-muted);
+}
+
+.profile-page input {
+  width: 100%;
+  height: 40px;
+
+  padding: 0 $space-3;
+
+  border: 1px solid var(--color-border);
+  border-radius: $radius-sm;
+
+  outline: none;
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:focus {
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 3px var(--color-brand-contrast);
+  }
+}
+
+
+/* =========================
+   ACCIONES DEL FORM
+   ========================= */
+
+.profile-form-actions {
+  grid-column: 1 / -1;
+
+  margin-top: $space-1;
+}
+
+.profile-page button[type='submit'] {
+  width: 100%;
+  height: 44px;
+
+  border: none;
+  border-radius: $radius-full;
+
+  background: var(--color-brand);
+  color: var(--color-text-inverse);
+
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: color-mix(in srgb, var(--color-brand) 88%, #000);
+  }
+}
+
+
+/* =========================
+   MENSAJES
+   ========================= */
+
+.profile-page > p.profile-message {
+  width: 100%;
+
+  margin: 0;
+
+  padding: $space-2 $space-3;
+
+  border-radius: $radius-sm;
+
+  font-size: $font-size-sm;
+}
+
+.profile-message-error {
+  background: var(--color-error-contrast);
+  color: var(--color-error);
+}
+
+.profile-message-success {
+  background: var(--color-success-contrast);
+  color: var(--color-success);
+}
+
+.profile-loading {
+  margin: $space-6 auto;
+
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: $breakpoint-md) {
+  .profile-page {
+    padding: $space-4;
+  }
+
+  .profile-page form {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-summary__avatar {
+    width: 44px;
+    height: 44px;
+
+    font-size: $font-size-sm;
+  }
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: $breakpoint-sm) {
+  .profile-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-summary__name,
+  .profile-summary__email {
+    white-space: normal;
+  }
+}
