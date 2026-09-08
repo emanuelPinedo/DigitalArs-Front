@@ -281,7 +281,7 @@ function TransferForm() {
                             disabled={!isClickable || submitting}
                             onClick={() => goToStep(item.id)}
                         >
-                            {item.id} {item.label}
+                            <span>{item.id}</span> {item.label}
                         </button>
                     );
                 })}

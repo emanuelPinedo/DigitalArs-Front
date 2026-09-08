@@ -4,6 +4,7 @@
   background: var(--color-surface);
   border-radius: $radius-lg;
   box-shadow: var(--shadow);
+  overflow: hidden;
 }
 
 .card-tab {
@@ -26,11 +27,15 @@
     color: var(--color-text-inverse);
 
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
 
 .card-body {
   padding: $space-3;
+}
+
+@media (max-width: $breakpoint-md) {
+  .card-tab h2 {
+    font-size: $font-size-sm;
+  }
 }

@@ -21,7 +21,7 @@
 }
 
 .transfer-form-card .card-tab {
-  width: min(400px, 100%);
+  width: min(400px, 60%);
 }
 
 .transfer-form-card .card-body {
@@ -334,4 +334,12 @@
     font-size: $font-size-sm;
     color: var(--color-text-muted);
   }
+}
+@media (max-width: $breakpoint-md) {
+  .transfer-step {
+    padding: $space-2 $space-1;
+    font-size: $font-size-xs;
+  }
+  .transfer-step span {display: none;}
+
 }
