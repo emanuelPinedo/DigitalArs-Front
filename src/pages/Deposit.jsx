@@ -11,9 +11,6 @@ const STEPS = [
     { id: 2, label: "Confirmación" },
 ];
 
-function getAccountCvu(account) {
-    return account?.cvu || account?.cbu || account?.CVU || account?.CBU || "";
-}
 
 function parseAmount(value) {
     const raw = String(value).trim().replace(/\$/g, "").replace(/\s/g, "");
@@ -46,15 +43,11 @@ function formatCurrency(value) {
     }).format(value);
 }
 
-function buildCopyText({ alias, cvu, titular, dni }) {
+function buildCopyText({ alias, titular, dni }) {
     const lines = [];
 
     if (alias) {
         lines.push(`Alias: ${alias}`);
-    }
-
-    if (cvu) {
-        lines.push(`CVU: ${cvu}`);
     }
 
     if (titular) {
@@ -136,8 +129,7 @@ function Deposit() {
     const alias = profile?.alias || "";
     const titular = profile?.fullName || "";
     const dni = profile?.dni || "";
-    const cvu = getAccountCvu(account);
-    const copyText = buildCopyText({ alias, cvu, titular, dni });
+    const copyText = buildCopyText({ alias, titular, dni });
 
     const parsedAmount = parseAmount(amount);
     const hasValidAmount = Number.isFinite(parsedAmount) && parsedAmount > 0;
@@ -304,10 +296,6 @@ function Deposit() {
                                             <span>Titular</span>
                                             <strong>{titular || "—"}</strong>
                                         </div>
-                                        <div>
-                                            <span>CVU</span>
-                                            <strong>{cvu || "—"}</strong>
-                                        </div>
                                     </div>
                                 </section>
 
@@ -410,10 +398,6 @@ function Deposit() {
                                     <dd className="deposit-details-alias">
                                         {alias || "—"}
                                     </dd>
-                                </div>
-                                <div>
-                                    <dt>CVU</dt>
-                                    <dd>{cvu || "—"}</dd>
                                 </div>
                                 <div>
                                     <dt>Titular</dt>
