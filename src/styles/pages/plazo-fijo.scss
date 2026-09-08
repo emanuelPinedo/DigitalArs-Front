@@ -114,22 +114,6 @@
   color: var(--color-error);
 }
 
-.plazo-banner {
-  padding: $space-3 $space-4;
-  border-radius: $radius-sm;
-  font-size: $font-size-sm;
-}
-
-.plazo-banner-success {
-  background: var(--color-success-contrast);
-  color: var(--color-success);
-}
-
-.plazo-banner-error {
-  background: var(--color-error-contrast);
-  color: var(--color-error);
-}
-
 .plazo-preview,
 .plazo-summary {
   display: flex;

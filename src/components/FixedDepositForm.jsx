@@ -1,6 +1,7 @@
 import { useState } from "react";
 import FixedDepositService from "../services/FixedDepositService";
 import { getApiErrorMessage } from "../utils/apiError";
+import useToast from "../hooks/useToast";
 import "../styles/pages/plazo-fijo.scss";
 
 const STEPS = [
@@ -61,6 +62,7 @@ function addDays(days) {
 }
 
 function FixedDepositForm({ availableBalance, annualRate, onCreated }) {
+    const { toast } = useToast();
     const [step, setStep] = useState(1);
     const [maxReachedStep, setMaxReachedStep] = useState(1);
 
@@ -68,8 +70,6 @@ function FixedDepositForm({ availableBalance, annualRate, onCreated }) {
     const [termDays, setTermDays] = useState("");
 
     const [errors, setErrors] = useState({});
-    const [serverError, setServerError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
     const parsedAmount = parseAmount(amount);
@@ -92,11 +92,6 @@ function FixedDepositForm({ availableBalance, annualRate, onCreated }) {
         }
 
         return maxReachedStep >= 2 && hasValidAmount && hasValidDays;
-    };
-
-    const resetFeedback = () => {
-        setServerError("");
-        setSuccessMessage("");
     };
 
     const resetForm = () => {
@@ -132,25 +127,20 @@ function FixedDepositForm({ availableBalance, annualRate, onCreated }) {
         }
 
         setErrors({});
-        resetFeedback();
         setStep(nextStep);
     };
 
     const handleAmountChange = (event) => {
         setAmount(event.target.value);
         setErrors((prev) => ({ ...prev, amount: "" }));
-        resetFeedback();
     };
 
     const handleTermDaysChange = (event) => {
         setTermDays(event.target.value);
         setErrors((prev) => ({ ...prev, termDays: "" }));
-        resetFeedback();
     };
 
     const handleContinue = () => {
-        resetFeedback();
-
         const nextErrors = validateStepOne();
 
         if (Object.keys(nextErrors).length > 0) {
@@ -165,7 +155,6 @@ function FixedDepositForm({ availableBalance, annualRate, onCreated }) {
 
     const handleConfirm = async (event) => {
         event.preventDefault();
-        resetFeedback();
 
         if (step !== 2) {
             return;
@@ -187,13 +176,13 @@ function FixedDepositForm({ availableBalance, annualRate, onCreated }) {
                 termDays: parsedDays,
             });
 
-            setSuccessMessage(
+            toast.success(
                 `Plazo fijo constituido. Interés ${formatCurrency(created.interestAmount ?? 0)} · al vencimiento recibís ${formatCurrency(created.finalAmount ?? 0)}.`
             );
             resetForm();
             onCreated?.(created);
         } catch (error) {
-            setServerError(
+            toast.error(
                 getApiErrorMessage(
                     error,
                     "No se pudo constituir el plazo fijo. Revisá el monto, el plazo y tu saldo."
@@ -224,12 +213,6 @@ function FixedDepositForm({ availableBalance, annualRate, onCreated }) {
                     );
                 })}
             </nav>
-
-            {successMessage && (
-                <div className="plazo-banner plazo-banner-success" role="status">
-                    {successMessage}
-                </div>
-            )}
 
             {step === 1 && (
                 <>
@@ -348,12 +331,6 @@ function FixedDepositForm({ availableBalance, annualRate, onCreated }) {
                             </div>
                         </dl>
                     </div>
-
-                    {serverError && (
-                        <div className="plazo-banner plazo-banner-error">
-                            {serverError}
-                        </div>
-                    )}
 
                     <div className="plazo-actions">
                         <button

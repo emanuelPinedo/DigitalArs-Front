@@ -1,0 +1,86 @@
+@use '../tokens' as *;
+
+.toast-container {
+  position: fixed;
+  right: $space-4;
+  bottom: $space-4;
+  z-index: 999;
+
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+
+  width: min(360px, calc(100vw - #{$space-6}));
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+
+  padding: $space-3 $space-3 $space-3 $space-4;
+
+  border-radius: $radius-sm;
+  box-shadow: var(--shadow);
+
+  font-size: $font-size-sm;
+  line-height: 1.4;
+
+  pointer-events: auto;
+  animation: toast-in $duration-normal ease-out;
+}
+
+.toast-success {
+  background: var(--color-success-contrast);
+  color: var(--color-success);
+}
+
+.toast-error {
+  background: var(--color-error-contrast);
+  color: var(--color-error);
+}
+
+.toast-message {
+  flex: 1;
+  margin: 0;
+}
+
+.toast-close {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  font-size: $font-size-lg;
+  line-height: 1;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: $breakpoint-sm) {
+  .toast-container {
+    right: $space-3;
+    bottom: $space-3;
+  }
+}

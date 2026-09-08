@@ -115,22 +115,6 @@
   color: var(--color-error);
 }
 
-.transfer-banner {
-  padding: $space-3 $space-4;
-  border-radius: $radius-sm;
-  font-size: $font-size-sm;
-}
-
-.transfer-banner-success {
-  background: var(--color-success-contrast);
-  color: var(--color-success);
-}
-
-.transfer-banner-error {
-  background: var(--color-error-contrast);
-  color: var(--color-error);
-}
-
 .recipient-list {
   display: flex;
   flex-direction: column;
@@ -341,5 +325,4 @@
     font-size: $font-size-xs;
   }
   .transfer-step span {display: none;}
-
 }

@@ -7,10 +7,12 @@ import UserModal from '../components/admin/UserModal';
 
 import AccountService from '../services/AccountService';
 import UserService from '../services/UserService';
+import useToast from '../hooks/useToast';
 
 import '../styles/pages/paneladmin.scss';
 
 function PanelAdmin() {
+    const { toast } = useToast();
 
     // =========================
     // USUARIOS
@@ -201,11 +203,11 @@ function PanelAdmin() {
 
         try {
 
-            setError('');
-
             await UserService.create(formData);
 
             closeModal();
+
+            toast.success('Usuario creado.');
 
             await loadUsers();
 
@@ -213,7 +215,7 @@ function PanelAdmin() {
 
             console.error(err);
 
-            setError(
+            toast.error(
                 'No se pudo crear el usuario.'
             );
         }
@@ -227,8 +229,6 @@ function PanelAdmin() {
 
         try {
 
-            setError('');
-
             await UserService.update(
                 selectedUser.id,
                 formData
@@ -236,13 +236,15 @@ function PanelAdmin() {
 
             closeModal();
 
+            toast.success('Usuario actualizado.');
+
             await loadUsers();
 
         } catch (err) {
 
             console.error(err);
 
-            setError(
+            toast.error(
                 'No se pudo actualizar el usuario.'
             );
         }
@@ -256,13 +258,13 @@ function PanelAdmin() {
 
         try {
 
-            setError('');
-
             await UserService.delete(
                 selectedUser.id
             );
 
             closeModal();
+
+            toast.success('Usuario eliminado.');
 
             await loadUsers();
 
@@ -270,7 +272,7 @@ function PanelAdmin() {
 
             console.error(err);
 
-            setError(
+            toast.error(
                 'No se pudo eliminar el usuario.'
             );
         }

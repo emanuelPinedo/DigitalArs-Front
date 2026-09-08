@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import UserService from "../services/UserService";
 import useAuth from "../hooks/useAuth";
+import useToast from "../hooks/useToast";
 import ProfileForm from "../components/ProfileForm";
 import Card from "../components/Card";
 import "../styles/pages/perfil.scss";
 
 function Perfil() {
     const { user, updateUser } = useAuth();
+    const { toast } = useToast();
 
     const [formData, setFormData] = useState({
         fullName: '',
@@ -19,14 +21,9 @@ function Perfil() {
     });
 
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        setError("");
-        setSuccess("");
 
         const wantsPasswordChange =
             formData.currentPassword.trim() !== "" ||
@@ -39,12 +36,12 @@ function Perfil() {
                 !formData.newPassword.trim() ||
                 !formData.confirmPassword.trim()
             ) {
-                setError("Para cambiar la contraseña tenés que completar los tres campos.");
+                toast.error("Para cambiar la contraseña tenés que completar los tres campos.");
                 return;
             }
 
             if (formData.newPassword !== formData.confirmPassword) {
-                setError("La nueva contraseña y su confirmación no coinciden.");
+                toast.error("La nueva contraseña y su confirmación no coinciden.");
                 return;
             }
         };
@@ -72,7 +69,7 @@ function Perfil() {
                 ...updatedUser,
             });
 
-            setSuccess("Tus datos se actualizaron correctamente.");
+            toast.success("Tus datos se actualizaron correctamente.");
 
             setFormData((prev) => ({
                 ...prev,
@@ -82,7 +79,7 @@ function Perfil() {
             }));
         } catch (error) {
             console.error(error);
-            setError("No pudimos actualizar tus datos.");
+            toast.error("No pudimos actualizar tus datos.");
         }
     };
 
@@ -90,7 +87,6 @@ function Perfil() {
         const loadPerfil = async () => {
             try {
                 setLoading(true);
-                setError("");
 
                 const userData = await UserService.getMe();
 
@@ -105,14 +101,14 @@ function Perfil() {
                 });
             } catch (error) {
                 console.error(error);
-                setError("No pudimos cargar tu perfil.");
+                toast.error("No pudimos cargar tu perfil.");
             } finally {
                 setLoading(false);
             }
         };
 
         loadPerfil();
-    }, []);
+    }, [toast]);
 
     if (loading) {
         return <p className="profile-loading">Cargando perfil...</p>
@@ -129,9 +125,6 @@ function Perfil() {
 
     return (
         <main className='profile-page'>
-
-            {error && <p className="profile-message profile-message-error">{error}</p>}
-            {success && <p className="profile-message profile-message-success">{success}</p>}
 
             <Card className="profile-summary-card" title={false}>
                 {!user ? (

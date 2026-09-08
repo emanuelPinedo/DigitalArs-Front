@@ -10,7 +10,6 @@
   flex-direction: column;
 
   flex: 1;
-  min-height: 0;
 
   gap: $space-4;
 
@@ -191,32 +190,6 @@
   }
 }
 
-
-/* =========================
-   MENSAJES
-   ========================= */
-
-.profile-page > p.profile-message {
-  width: 100%;
-
-  margin: 0;
-
-  padding: $space-2 $space-3;
-
-  border-radius: $radius-sm;
-
-  font-size: $font-size-sm;
-}
-
-.profile-message-error {
-  background: var(--color-error-contrast);
-  color: var(--color-error);
-}
-
-.profile-message-success {
-  background: var(--color-success-contrast);
-  color: var(--color-success);
-}
 
 .profile-loading {
   margin: $space-6 auto;

@@ -3,6 +3,7 @@ import Card from "../components/Card";
 import AccountService from "../services/AccountService";
 import UserService from "../services/UserService";
 import useRealtime from "../hooks/useRealtime";
+import useToast from "../hooks/useToast";
 import { getApiErrorMessage } from "../utils/apiError";
 import "../styles/pages/deposit.scss";
 
@@ -63,6 +64,7 @@ function buildCopyText({ alias, titular, dni }) {
 
 function Deposit() {
     const { refreshAccount } = useRealtime();
+    const { toast } = useToast();
 
     const [profile, setProfile] = useState(null);
     const [account, setAccount] = useState(null);
@@ -74,8 +76,6 @@ function Deposit() {
     const [amount, setAmount] = useState("");
     const [confirmedAmount, setConfirmedAmount] = useState(null);
     const [amountError, setAmountError] = useState("");
-    const [serverError, setServerError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
@@ -144,7 +144,6 @@ function Deposit() {
         setAmount("");
         setConfirmedAmount(null);
         setAmountError("");
-        setServerError("");
     };
 
     const handleCopy = async () => {
@@ -164,9 +163,6 @@ function Deposit() {
     };
 
     const handleContinue = () => {
-        setServerError("");
-        setSuccessMessage("");
-
         if (!hasValidAmount) {
             setAmountError("El monto debe ser mayor a 0.");
             return;
@@ -179,7 +175,6 @@ function Deposit() {
 
     const handleConfirm = async (event) => {
         event.preventDefault();
-        setServerError("");
 
         if (!isConfirmStep || !Number.isFinite(amountToConfirm) || amountToConfirm <= 0) {
             return;
@@ -191,12 +186,12 @@ function Deposit() {
             await AccountService.deposit({ amount: amountToConfirm });
             await refreshAccount();
 
-            setSuccessMessage(
+            toast.success(
                 `Depósito de ${formatCurrency(amountToConfirm)} acreditado.`
             );
             resetForm();
         } catch (error) {
-            setServerError(
+            toast.error(
                 getApiErrorMessage(
                     error,
                     "No se pudo completar el depósito. Intentá de nuevo."
@@ -238,7 +233,6 @@ function Deposit() {
                                             }
 
                                             setAmountError("");
-                                            setServerError("");
                                             setStep(item.id);
                                         }}
                                     >
@@ -247,15 +241,6 @@ function Deposit() {
                                 );
                             })}
                         </nav>
-
-                        {successMessage ? (
-                            <div
-                                className="deposit-banner deposit-banner-success"
-                                role="status"
-                            >
-                                {successMessage}
-                            </div>
-                        ) : null}
 
                         {isConfirmStep ? (
                             <>
@@ -299,12 +284,6 @@ function Deposit() {
                                     </div>
                                 </section>
 
-                                {serverError ? (
-                                    <div className="deposit-banner deposit-banner-error">
-                                        {serverError}
-                                    </div>
-                                ) : null}
-
                                 <div className="deposit-actions">
                                     <button
                                         type="button"
@@ -333,16 +312,15 @@ function Deposit() {
                                     <label htmlFor="amount">Monto</label>
                                     <input
                                         className="deposit-input"
-                                        type="text"
+                                        type="number"
                                         id="amount"
                                         name="amount"
                                         inputMode="decimal"
-                                        placeholder="$ 0,00"
+                                        placeholder="0,00"
                                         value={amount}
                                         onChange={(event) => {
                                             setAmount(event.target.value);
                                             setAmountError("");
-                                            setSuccessMessage("");
                                         }}
                                         disabled={submitting}
                                         autoComplete="off"

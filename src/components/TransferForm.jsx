@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import UserService from "../services/UserService";
 import TransactionService from "../services/TransactionService";
 import { getApiErrorMessage } from "../utils/apiError";
+import useToast from "../hooks/useToast";
 import "../styles/pages/transfer.scss";
 
 const STEPS = [
@@ -38,6 +39,7 @@ function formatRecipientMeta(user) {
 }
 
 function TransferForm() {
+    const { toast } = useToast();
     const [step, setStep] = useState(1);
     const [maxReachedStep, setMaxReachedStep] = useState(1);
 
@@ -49,8 +51,6 @@ function TransferForm() {
     const [recipient, setRecipient] = useState(null);
 
     const [errors, setErrors] = useState({});
-    const [serverError, setServerError] = useState("");
-    const [successMessage, setSuccessMessage] = useState("");
     const [searchHint, setSearchHint] = useState("");
 
     const [searching, setSearching] = useState(false);
@@ -72,11 +72,6 @@ function TransferForm() {
         }
 
         return maxReachedStep >= 3 && hasRecipient && hasValidAmount;
-    };
-
-    const resetFeedback = () => {
-        setServerError("");
-        setSuccessMessage("");
     };
 
     useEffect(() => {
@@ -150,7 +145,6 @@ function TransferForm() {
         setAlias(event.target.value);
         setRecipient(null);
         setErrors((prev) => ({ ...prev, alias: "", recipient: "" }));
-        resetFeedback();
     };
 
     const handleSelectRecipient = (user) => {
@@ -160,18 +154,15 @@ function TransferForm() {
 
         setRecipient(user);
         setErrors((prev) => ({ ...prev, recipient: "" }));
-        resetFeedback();
     };
 
     const handleAmountChange = (event) => {
         setAmount(event.target.value);
         setErrors((prev) => ({ ...prev, amount: "" }));
-        resetFeedback();
     };
 
     const handleDescriptionChange = (event) => {
         setDescription(event.target.value);
-        resetFeedback();
     };
 
     const goToStep = (nextStep) => {
@@ -180,18 +171,14 @@ function TransferForm() {
         }
 
         setErrors({});
-        resetFeedback();
         setStep(nextStep);
     };
 
     const handleCancel = () => {
         resetForm();
-        resetFeedback();
     };
 
     const handleContinueFromRecipient = () => {
-        resetFeedback();
-
         if (!hasRecipient) {
             setErrors({
                 recipient: "Seleccioná un destinatario antes de continuar.",
@@ -205,8 +192,6 @@ function TransferForm() {
     };
 
     const handleContinueFromAmount = () => {
-        resetFeedback();
-
         if (!hasValidAmount) {
             setErrors({ amount: "El monto debe ser mayor a 0." });
             return;
@@ -231,7 +216,6 @@ function TransferForm() {
 
     const handleConfirm = async (event) => {
         event.preventDefault();
-        resetFeedback();
 
         if (step !== 3) {
             return;
@@ -250,12 +234,12 @@ function TransferForm() {
                 description,
             });
 
-            setSuccessMessage(
+            toast.success(
                 `Transferencia enviada a ${recipient.fullName}.`
             );
             resetForm();
         } catch (error) {
-            setServerError(
+            toast.error(
                 getApiErrorMessage(
                     error,
                     "No se pudo completar la transferencia. Intentá de nuevo."
@@ -286,12 +270,6 @@ function TransferForm() {
                     );
                 })}
             </nav>
-
-            {successMessage && (
-                <div className="transfer-banner transfer-banner-success" role="status">
-                    {successMessage}
-                </div>
-            )}
 
             {step === 1 && (
                 <>
@@ -466,12 +444,6 @@ function TransferForm() {
                             )}
                         </dl>
                     </div>
-
-                    {serverError && (
-                        <div className="transfer-banner transfer-banner-error">
-                            {serverError}
-                        </div>
-                    )}
 
                     <div className="transfer-actions">
                         <button

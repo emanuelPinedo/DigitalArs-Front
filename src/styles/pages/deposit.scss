@@ -108,22 +108,6 @@
   color: var(--color-error);
 }
 
-.deposit-banner {
-  padding: $space-3 $space-4;
-  border-radius: $radius-sm;
-  font-size: $font-size-sm;
-}
-
-.deposit-banner-success {
-  background: var(--color-success-contrast);
-  color: var(--color-success);
-}
-
-.deposit-banner-error {
-  background: var(--color-error-contrast);
-  color: var(--color-error);
-}
-
 .deposit-summary {
   display: flex;
   flex-direction: column;

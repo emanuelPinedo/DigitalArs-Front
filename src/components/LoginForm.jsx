@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import useToast from "../hooks/useToast";
 import eyeIcon from "../assets/images/icons/eye.svg";
 import eyeOffIcon from "../assets/images/icons/eye-off.svg";
 
 function LoginForm() {
     const { login } = useAuth();
+    const { toast } = useToast();
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const [errors, setErrors] = useState({});
-    const [serverError, setServerError] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -20,7 +21,6 @@ function LoginForm() {
         event.preventDefault();
 
         const newErrors = {};
-        setServerError("");
 
         if (!email.trim() || !email.includes("@")) {
             newErrors.email = "Ingresa un email valido"
@@ -48,14 +48,14 @@ function LoginForm() {
             } else if (role === "User") {
                 navigate("/dashboard");
             } else {
-                setServerError("El usuario no tiene un rol válido.");
+                toast.error("El usuario no tiene un rol válido.");
             }
         } catch (error) {
             const message = error.response?.data?.message
                 || (!error.response && "No se pudo conectar con el servidor.")
                 || "No se pudo iniciar sesión. Verifica tu email y contraseña.";
 
-            setServerError(message);
+            toast.error(message);
         } finally {
             setLoading(false);
         }
@@ -69,8 +69,6 @@ function LoginForm() {
             ...prev, 
             email: "", 
         }));
-        
-        setServerError(""); 
     };
 
     const handlePasswordChange = (event) => {
@@ -80,8 +78,6 @@ function LoginForm() {
             ...prev,
             password: "",
         }));
-        
-        setServerError(""); 
     };
 
 return (
@@ -142,11 +138,6 @@ return (
                     {errors.password}
                 </span>
             )} 
-            {serverError && (
-            <div className="login-error">
-                {serverError}
-            </div>
-            )}
         </div>
 
         <button className="login-button" type="submit" disabled={loading}>
