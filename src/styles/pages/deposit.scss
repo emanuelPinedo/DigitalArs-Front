@@ -10,16 +10,20 @@
 }
 
 .deposit-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  display: flex;
   gap: $space-6;
   align-items: start;
 
   @media (max-width: $breakpoint-lg) {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 }
-
+.deposit-form-card {
+  width: 70%;
+}
+.deposit-details-card {
+  width: 30%;
+}
 .deposit-form-card .card-tab {
   width: min(400px, 60%);
 }
@@ -116,6 +120,7 @@
   background: var(--color-inactive);
   border-radius: $radius-sm;
   color: var(--color-text);
+  overflow: hidden;
 }
 
 .deposit-summary-rows {
@@ -253,10 +258,6 @@
     text-align: right;
     word-break: break-all;
   }
-}
-
-.deposit-details-alias {
-  text-transform: uppercase;
 }
 
 .deposit-details-status,

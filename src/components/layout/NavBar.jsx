@@ -31,7 +31,6 @@ function Navbar({ isOpen, onClose }) {
         navigate("/login");
     };
 
-    console.log(user);
     return (
         <nav className={'navbar ' + (isOpen ? "navbar--open" : "").trim()}>
             <Link to="/dashboard" className="navbar-logo">

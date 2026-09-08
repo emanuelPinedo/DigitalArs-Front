@@ -173,9 +173,7 @@ function Deposit() {
         setStep(2);
     };
 
-    const handleConfirm = async (event) => {
-        event.preventDefault();
-
+    const submitDeposit = async () => {
         if (!isConfirmStep || !Number.isFinite(amountToConfirm) || amountToConfirm <= 0) {
             return;
         }
@@ -202,6 +200,16 @@ function Deposit() {
         }
     };
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        if (isConfirmStep) {
+            return;
+        }
+
+        handleContinue();
+    };
+
     return (
         <main className="deposit-page">
             <div className="deposit-layout">
@@ -209,7 +217,7 @@ function Deposit() {
                     titleName="Nuevo depósito"
                     className="deposit-form-card"
                 >
-                    <form className="deposit-form" onSubmit={handleConfirm}>
+                    <form className="deposit-form" onSubmit={handleSubmit}>
                         <nav className="deposit-steps" aria-label="Pasos del depósito">
                             {STEPS.map((item) => {
                                 const isActive = Number(step) === item.id;
@@ -294,8 +302,9 @@ function Deposit() {
                                         Volver
                                     </button>
                                     <button
-                                        type="submit"
+                                        type="button"
                                         className="deposit-button deposit-button-primary"
+                                        onClick={submitDeposit}
                                         disabled={
                                             submitting ||
                                             !Number.isFinite(amountToConfirm) ||
