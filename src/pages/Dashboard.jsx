@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Card from "../components/Card";
 import Counter from "../components/Counter";
@@ -81,6 +81,33 @@ function Dashboard() {
     const [transactionsLoading, setTransactionsLoading] = useState(true);
     const [transactionsError, setTransactionsError] = useState("");
     const [balanceVisible, setBalanceVisible] = useState(true);
+    const currencyRef = useRef(null);
+    const [currencyFontSize, setCurrencyFontSize] = useState(60);
+    const loading = accountLoading && !account;
+    const hasAccountError = Boolean(accountError && !account);
+
+    useLayoutEffect(() => {
+        const node = currencyRef.current;
+
+        if (!node) {
+            return undefined;
+        }
+
+        const syncFontSize = () => {
+            const size = parseFloat(getComputedStyle(node).fontSize);
+
+            if (Number.isFinite(size)) {
+                setCurrencyFontSize(size);
+            }
+        };
+
+        syncFontSize();
+
+        const observer = new ResizeObserver(syncFontSize);
+        observer.observe(node);
+
+        return () => observer.disconnect();
+    }, [loading, hasAccountError]);
 
     const loadTransactions = useCallback(async () => {
         try {
@@ -158,8 +185,6 @@ function Dashboard() {
         };
     }, [lastUpdatedAt]);
 
-    const loading = accountLoading && !account;
-
     if (loading) {
         return (
             <main className="dashboard-page">
@@ -208,14 +233,14 @@ function Dashboard() {
                     </button>
                 </div>
                 <h2 className="dashboard-balance-amount">
-                    <span className="dashboard-currency">$</span>
+                    <span className="dashboard-currency" ref={currencyRef}>$</span>
                     {balanceVisible ? (
                         <Counter
                             value={balance ?? 0}
                             fractionDigits={2}
                             decimalSeparator=","
                             thousandSeparator="."
-                            fontSize={60}
+                            fontSize={currencyFontSize}
                             padding={0}
                             gap={2}
                             horizontalPadding={0}
@@ -232,22 +257,22 @@ function Dashboard() {
             <section className="dashboard-actions">
                 <Link to="/deposit" className="dashboard-action">
                     <Icon svg={walletIcon} />
-                    Ingresar fondos
+                    <p>Ingresar fondos</p>
                 </Link>
 
                 <Link to="/transferencias" className="dashboard-action">
                     <Icon svg={sendIcon} />
-                    Transferencias
+                    <p>Transferencias</p>
                 </Link>
 
                 <Link to="/plazo-fijo" className="dashboard-action">
                     <Icon svg={landmarkIcon} />
-                    Plazo fijo
+                    <p>Plazo fijo</p>
                 </Link>
 
                 <Link to="/historial" className="dashboard-action">
                     <Icon svg={historyIcon} />
-                    Historial de movimientos
+                    <p>Historial de movimientos</p>
                 </Link>
             </section>
 

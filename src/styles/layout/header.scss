@@ -256,4 +256,15 @@
     h2 {font-size: $font-size-md;}
     p {display: none;}
   }
+
+  .notification-panel-header {
+    strong {
+        font-size: $font-size-sm;
+    }
+  }
+  .notification-item-title, 
+  .notification-item-message, 
+  .notification-item-time {
+    font-size: $font-size-xs;
+    }
 }
