@@ -121,7 +121,7 @@ npm run dev
 
 `http://localhost:5173`
 
-## Estructura del proyecto  ///revisar esto
+## Estructura del proyecto
 
 La estructura principal del frontend se organiza de la siguiente manera:
 
@@ -129,18 +129,30 @@ La estructura principal del frontend se organiza de la siguiente manera:
 src/
 ├── components/
 │   ├── admin/
-│   │   └── AuthContext.jsx
-│   │   └── AuthContext.jsx
-│   └── layout/
-│       └── AuthContext.jsx
+│   │   ├── UserFilters.
+│   │   ├── UserPagination.jsx
+│   │   ├── UserTable.jsx
+│   │   └── UserModel.jsx
+│   ├── layout/
+│   │   ├── Header.jsx
+│   │   ├── Navbar.jsx
+│   │   └── ...
+│   ├── Card.jsx
+│   ├── Counter.jsx
+│   ├── FixedDepositForm.jsx
+│   └── ...
 ├── context/
 │   └── AuthContext.jsx
 ├── hooks/
-│   └── useAuth.js
+│   ├── useRealtime.jsx
+│   ├── useTheme.jsx
+│   ├── useAuth.js
+│   └── ...
 ├── pages/
 │   ├── Login.jsx
 │   ├── Dashboard.jsx
-│   ├── Perfil.jsx
+│   ├── PanelAdmin.jsx
+│   ├── Transferencias.jsx
 │   └── ...
 ├── services/
 │   ├── AccountService.js
@@ -150,9 +162,10 @@ src/
 │   ├── api.js
 │   └── ...
 ├── styles/
-│   └── api.js
 │   ├── components/
-│   ├── layout/
+│   ├── pages/
+│   ├── main.css
+│   └── ...
 ├── App.jsx
 ├── main.jsx
 └── ...
