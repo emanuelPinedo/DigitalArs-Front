@@ -1,3 +1,7 @@
+import eyeIcon from "../assets/images/icons/eye.svg";
+import eyeOffIcon from "../assets/images/icons/eye-off.svg";
+import { useState } from "react";
+
 function ProfileForm({
     formData,
     setFormData,
@@ -8,6 +12,11 @@ function ProfileForm({
     setIsChangingPassword,
     onCancelEdit,
 }) {
+
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     const handleChange = (field, value) => {
         setFormData({
             ...formData,
@@ -138,14 +147,14 @@ function ProfileForm({
                 {isChangingPassword && (
                     <div className="profile-password-fields">
 
-                        <div>
+                        <div className="password-input">
                             <label htmlFor="currentPassword">
                                 Contraseña actual
                             </label>
 
                             <input
                                 id="currentPassword"
-                                type="password"
+                                type={showCurrentPassword ? "text" : "password"}
                                 value={formData.currentPassword}
                                 onChange={(e) =>
                                     handleChange(
@@ -154,16 +163,28 @@ function ProfileForm({
                                     )
                                 }
                             />
+                            <button
+                                type="button"
+                                className="toggle-password"
+                                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                aria-label={showCurrentPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                            >
+                                <img
+                                    className="toggle-password-icon"
+                                    src={showCurrentPassword ? eyeOffIcon : eyeIcon}
+                                    alt=""
+                                />
+                            </button>
                         </div>
 
-                        <div>
+                        <div className="password-input">
                             <label htmlFor="newPassword">
                                 Nueva contraseña
                             </label>
 
                             <input
                                 id="newPassword"
-                                type="password"
+                                type={showNewPassword ? "text" : "password"}
                                 value={formData.newPassword}
                                 onChange={(e) =>
                                     handleChange(
@@ -172,16 +193,29 @@ function ProfileForm({
                                     )
                                 }
                             />
+
+                            <button
+                                type="button"
+                                className="toggle-password"
+                                onClick={() => setShowNewPassword(!showNewPassword)}
+                                aria-label={showNewPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                            >
+                                <img
+                                    className="toggle-password-icon"
+                                    src={showNewPassword ? eyeOffIcon : eyeIcon}
+                                    alt=""
+                                />
+                            </button>
                         </div>
 
-                        <div>
+                        <div className="password-input">
                             <label htmlFor="confirmPassword">
                                 Confirmar nueva contraseña
                             </label>
 
                             <input
                                 id="confirmPassword"
-                                type="password"
+                                type={showConfirmPassword ? "text" : "password"}
                                 value={formData.confirmPassword}
                                 onChange={(e) =>
                                     handleChange(
@@ -190,6 +224,19 @@ function ProfileForm({
                                     )
                                 }
                             />
+
+                            <button
+                                type="button"
+                                className="toggle-password"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                            >
+                                <img
+                                    className="toggle-password-icon"
+                                    src={showConfirmPassword ? eyeOffIcon : eyeIcon}
+                                    alt=""
+                                />
+                            </button>
                         </div>
 
                         <div className="profile-password-actions">
