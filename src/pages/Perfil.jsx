@@ -21,6 +21,9 @@ function Perfil() {
     });
 
     const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [originalFormData, setOriginalFormData] = useState(null);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -64,6 +67,19 @@ function Perfil() {
 
             const updatedUser = await UserService.getMe();
 
+            const updatedFormData = {
+                fullName: updatedUser.fullName ?? "",
+                email: updatedUser.email ?? "",
+                dni: updatedUser.dni ?? "",
+                alias: updatedUser.alias ?? "",
+                currentPassword: "",
+                newPassword: "",
+                confirmPassword: "",
+            };
+
+            setFormData(updatedFormData);
+            setOriginalFormData(updatedFormData);
+
             updateUser({
                 ...user,
                 ...updatedUser,
@@ -71,12 +87,9 @@ function Perfil() {
 
             toast.success("Tus datos se actualizaron correctamente.");
 
-            setFormData((prev) => ({
-                ...prev,
-                currentPassword: "",
-                newPassword: "",
-                confirmPassword: "",
-            }));
+            setIsEditing(false);
+            setIsChangingPassword(false);
+
         } catch (error) {
             console.error(error);
             toast.error("No pudimos actualizar tus datos.");
@@ -90,7 +103,7 @@ function Perfil() {
 
                 const userData = await UserService.getMe();
 
-                setFormData({
+                const profileData = {
                     fullName: userData.fullName ?? "",
                     email: userData.email ?? "",
                     dni: userData.dni ?? "",
@@ -98,7 +111,11 @@ function Perfil() {
                     currentPassword: "",
                     newPassword: "",
                     confirmPassword: "",
-                });
+                };
+
+                setFormData(profileData);
+                setOriginalFormData(profileData);
+
             } catch (error) {
                 console.error(error);
                 toast.error("No pudimos cargar tu perfil.");
@@ -116,11 +133,11 @@ function Perfil() {
 
     const initials = user?.fullName
         ? user.fullName
-              .split(" ")
-              .filter(Boolean)
-              .slice(0, 2)
-              .map((part) => part[0].toUpperCase())
-              .join("")
+            .split(" ")
+            .filter(Boolean)
+            .slice(0, 2)
+            .map((part) => part[0].toUpperCase())
+            .join("")
         : "?";
 
     return (
@@ -154,6 +171,19 @@ function Perfil() {
                     formData={formData}
                     setFormData={setFormData}
                     handleSubmit={handleSubmit}
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                    isChangingPassword={isChangingPassword}
+                    setIsChangingPassword={setIsChangingPassword}
+                    onCancelEdit={() => {
+                        setFormData({
+                            ...originalFormData,
+                            currentPassword: "",
+                            newPassword: "",
+                            confirmPassword: "",
+                        });
+                        setIsEditing(false);
+                    }}
                 />
             </Card>
 

@@ -147,14 +147,25 @@
 
   transition:
     border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    box-shadow 0.2s ease,
+    background 0.2s ease; /* revisar */
 
-  &:focus {
-    border-color: var(--color-brand);
-    box-shadow: 0 0 0 3px var(--color-brand-contrast);
-  }
 }
 
+
+/* Campos editables */ 
+.profile-page input:not(:disabled):focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px var(--color-brand-contrast); 
+}
+
+/* Campos bloqueados */ 
+.profile-page input:disabled {
+  background: var(--color-background);
+  color: var(--color-text);
+  cursor: default;
+  opacity: 0.85; 
+}
 
 /* =========================
    ACCIONES DEL FORM
@@ -162,20 +173,18 @@
 
 .profile-form-actions {
   grid-column: 1 / -1;
-
-  margin-top: $space-1;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: flex-end;
+  gap: $space-2;
+  margin-top: $space-2;
 }
 
-.profile-page button[type='submit'] {
-  width: 100%;
-  height: 44px;
-
-  border: none;
+.profile-button {
+  height: 42px;
+  padding: 0 $space-4;
   border-radius: $radius-full;
-
-  background: var(--color-brand);
-  color: var(--color-text-inverse);
-
+  
   font-size: $font-size-sm;
   font-weight: $font-weight-bold;
   letter-spacing: 0.03em;
@@ -183,13 +192,117 @@
 
   cursor: pointer;
 
-  transition: background 0.2s ease;
+  transition: 
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
 
-  &:hover {
-    background: color-mix(in srgb, var(--color-brand) 88%, #000);
-  }
 }
 
+/* Boton principal */
+.profile-button--primary {
+  border: none;
+  background: var(--color-brand);
+  color: var(--color-text-inverse);
+}
+
+.profile-button--primary:hover {
+  background: color-mix(
+    in srgb,
+    var(--color-brand) 88%,
+    #000
+  );
+}
+
+/* Boton editar */
+.profile-button--secondary {
+  width: 100%;
+
+  border: 1px solid var(--color-brand);
+  background: transparent;
+  color: var(--color-brand);
+}
+
+.profile-button--secondary:hover {
+  background: var(--color-brand-contrast );
+}
+
+/* Boton cancelar */
+.profile-button--cancel {
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+}
+
+.profile-button--cancel:hover {
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Contraseña */
+
+.profile-password-section {
+  grid-column: 1 / -1;
+  margin-top: $space-3;
+  padding-top: $space-4;
+
+  border-top: 1px solid var(--color-border);
+}
+
+.profile-password-header {
+  display: flex;
+  align-items: center;
+
+  justify-content: space-between;
+  gap: $space-3;
+}
+
+.profile-password-header > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.profile-password-header p {
+  margin: 0;
+
+  font-size: $font-size-xs;
+  color: var(--color-text-muted);
+}
+
+.profile-password-button {
+  border: none;
+  background: transparent;
+  color: var(--color-brand);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.profile-password-button:hover {
+  text-decoration: underline;
+}
+
+.profile-password-field {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: $space-3 $space-4;
+  margin-top: $space-4;
+}
+
+.profile-password-actions {
+  grid-column: 1 / -1;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: flex-end;
+  gap: $space-2;
+  margin-top: $space-1;
+}
+
+/* LOADING */
 
 .profile-loading {
   margin: $space-6 auto;
@@ -218,8 +331,12 @@
 
     font-size: $font-size-sm;
   }
-}
 
+  .profile-password-field {
+    grid-template-columns: 1fr;
+  }
+
+}
 
 /* =========================
    MOBILE
@@ -235,4 +352,23 @@
   .profile-summary__email {
     white-space: normal;
   }
+
+  .profile-password-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .profile-password-button {
+    padding: 0;
+  }
+
+  .profile-form-actions,
+  .profile-password-actions {
+    flex-direction: column !important;
+  }
+
+  .profile-button {
+    width: 100%;
+  }
+
 }
