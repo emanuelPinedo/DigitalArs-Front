@@ -278,3 +278,11 @@
 .deposit-details-copy-status.error {
   color: var(--color-error);
 }
+@media (max-width: $breakpoint-md) {
+  .deposit-form-card {
+    width: 100%;
+  }
+  .deposit-details-card {
+    width: 100%;
+  }
+}

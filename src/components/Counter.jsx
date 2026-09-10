@@ -1,15 +1,18 @@
-import { motion, useSpring, useTransform } from 'motion/react';
-import { useEffect } from 'react';
+import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from 'motion/react';
+import { useEffect, useState } from 'react';
 
 import './Counter.css';
 
-function RollingDigit({ mv, number, height }) {
+const ANIMATION_DURATION = 0.7;
+
+function RollingDigit({ mv, number, height, place }) {
   const y = useTransform(mv, (latest) => {
-    if (!Number.isFinite(latest)) {
+    if (!Number.isFinite(latest) || !Number.isFinite(place) || place === 0) {
       return 0;
     }
 
-    const placeValue = latest % 10;
+    const valueRoundedToPlace = getValueRoundedToPlace(latest, place);
+    const placeValue = valueRoundedToPlace % 10;
     const offset = (10 + number - placeValue) % 10;
     let memo = offset * height;
 
@@ -63,23 +66,13 @@ function getValueRoundedToPlace(value, place) {
   return Number.isFinite(rounded) ? rounded : 0;
 }
 
-function Digit({ place, value, height, digitStyle, decimalSeparator, thousandSeparator }) {
+function integerDigitCount(value) {
+  return Math.max(1, Math.floor(Math.abs(Number(value) || 0)).toString().length);
+}
+
+function Digit({ place, amountMV, height, digitStyle, decimalSeparator, thousandSeparator }) {
   const isDecimal = place === '.';
   const isThousand = place === ',';
-  const valueRoundedToPlace = isDecimal || isThousand
-    ? 0
-    : getValueRoundedToPlace(value, place);
-  const animatedValue = useSpring(0, {
-    stiffness: 70,
-    damping: 22,
-    mass: 0.8,
-  });
-
-  useEffect(() => {
-    if (!isDecimal && !isThousand) {
-      animatedValue.set(valueRoundedToPlace);
-    }
-  }, [animatedValue, valueRoundedToPlace, isDecimal, isThousand]);
 
   if (isDecimal || isThousand) {
     return (
@@ -92,7 +85,7 @@ function Digit({ place, value, height, digitStyle, decimalSeparator, thousandSep
   return (
     <span className="counter-digit" style={{ height, ...digitStyle }}>
       {Array.from({ length: 10 }, (_, i) => (
-        <RollingDigit key={i} mv={animatedValue} number={i} height={height} />
+        <RollingDigit key={i} mv={amountMV} number={i} height={height} place={place} />
       ))}
     </span>
   );
@@ -115,7 +108,7 @@ function insertThousandMarkers(integerPlaces) {
 
 function getPlacesFromValue(value, fractionDigits = 0, useGrouping = false) {
   const amount = Math.abs(Number(value) || 0);
-  const integerDigits = Math.max(1, Math.floor(amount).toString().length);
+  const integerDigits = integerDigitCount(amount);
   const integerPlaces = Array.from(
     { length: integerDigits },
     (_, i) => 10 ** (integerDigits - i - 1)
@@ -136,8 +129,18 @@ function getPlacesFromValue(value, fractionDigits = 0, useGrouping = false) {
   return [...groupedPlaces, '.', ...fractionPlaces];
 }
 
+function resolveStartValue(value, fromValue, fractionDigits) {
+  if (fromValue == null || fromValue === '') {
+    return value;
+  }
+
+  const numericFrom = Number(toNumericAmount(fromValue).toFixed(fractionDigits));
+  return Number.isFinite(numericFrom) ? numericFrom : value;
+}
+
 export default function Counter({
   value,
+  fromValue,
   fontSize = 100,
   padding = 0,
   places,
@@ -160,8 +163,13 @@ export default function Counter({
 }) {
   const height = fontSize + padding;
   const numericValue = Number(toNumericAmount(value).toFixed(fractionDigits));
+  const startValue = resolveStartValue(numericValue, fromValue, fractionDigits);
+  const amountMV = useMotionValue(startValue);
+  const [placesSource, setPlacesSource] = useState(
+    Math.max(Math.abs(startValue), Math.abs(numericValue))
+  );
   const digitPlaces = places ?? getPlacesFromValue(
-    numericValue,
+    placesSource,
     fractionDigits,
     Boolean(thousandSeparator)
   );
@@ -184,6 +192,26 @@ export default function Counter({
     background: `linear-gradient(to top, ${gradientFrom}, ${gradientTo})`
   };
 
+  useMotionValueEvent(amountMV, 'change', (latest) => {
+    const next = Math.abs(latest);
+    setPlacesSource((previous) => (
+      integerDigitCount(previous) === integerDigitCount(next) ? previous : next
+    ));
+  });
+
+  useEffect(() => {
+    if (amountMV.get() === numericValue) {
+      return undefined;
+    }
+
+    const controls = animate(amountMV, numericValue, {
+      duration: ANIMATION_DURATION,
+      ease: 'easeOut',
+    });
+
+    return () => controls.stop();
+  }, [amountMV, numericValue]);
+
   return (
     <span className="counter-container" style={containerStyle}>
       <span className="counter-counter" style={{ ...defaultCounterStyle, ...counterStyle }}>
@@ -191,7 +219,7 @@ export default function Counter({
           <Digit
             key={`${place}-${index}`}
             place={place}
-            value={numericValue}
+            amountMV={amountMV}
             height={height}
             digitStyle={digitStyle}
             decimalSeparator={decimalSeparator}

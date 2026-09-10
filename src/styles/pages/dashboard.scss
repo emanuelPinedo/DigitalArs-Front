@@ -52,6 +52,10 @@
   }
 }
 
+.dashboard-balance-counter.is-hidden {
+  display: none;
+}
+
 .dashboard-balance-masked {
   letter-spacing: 0.12em;
 }
@@ -74,7 +78,7 @@
 
 .dashboard-alias {
   margin: $space-1 0 0;
-  font-size: $font-size-xs;
+  font-size: $font-size-sm;
   letter-spacing: 0.08em;
   color: var(--color-text-muted);
 }

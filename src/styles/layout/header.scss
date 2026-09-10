@@ -185,9 +185,12 @@
         border-color: var(--color-brand);
         background: var(--color-brand-contrast);
 
+        .notification-item-message,
+        .notification-item-time,
         .notification-item-title {
             color: var(--color-brand);
         }
+    
     }
 }
 

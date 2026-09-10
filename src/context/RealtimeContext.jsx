@@ -22,6 +22,26 @@ export function RealtimeProvider({ children }) {
     const [notifications, setNotifications] = useState([]);
     const [lastEvent, setLastEvent] = useState(null);
     const [lastUpdatedAt, setLastUpdatedAt] = useState(0);
+    const lastDisplayedBalanceRef = useRef(null);
+    const rememberBalanceTimeoutRef = useRef(0);
+
+    const getLastDisplayedBalance = useCallback(
+        () => lastDisplayedBalanceRef.current,
+        []
+    );
+
+    const cancelRememberDisplayedBalance = useCallback(() => {
+        window.clearTimeout(rememberBalanceTimeoutRef.current);
+    }, []);
+
+    const rememberDisplayedBalanceSoon = useCallback((amount) => {
+        cancelRememberDisplayedBalance();
+        rememberBalanceTimeoutRef.current = window.setTimeout(() => {
+            lastDisplayedBalanceRef.current = Number.isFinite(Number(amount))
+                ? Number(amount)
+                : null;
+        }, 0);
+    }, [cancelRememberDisplayedBalance]);
 
     const applyAccountEvent = useCallback((event) => {
         if (!event) {
@@ -102,6 +122,8 @@ export function RealtimeProvider({ children }) {
 
     useEffect(() => {
         if (!isAuthenticated) {
+            lastDisplayedBalanceRef.current = null;
+            window.clearTimeout(rememberBalanceTimeoutRef.current);
             return undefined;
         }
 
@@ -224,18 +246,24 @@ export function RealtimeProvider({ children }) {
             markAllRead,
             lastEvent,
             lastUpdatedAt,
+            getLastDisplayedBalance,
+            cancelRememberDisplayedBalance,
+            rememberDisplayedBalanceSoon,
         }),
         [
             account,
             accountError,
             accountLoading,
             balance,
+            cancelRememberDisplayedBalance,
+            getLastDisplayedBalance,
             lastEvent,
             lastUpdatedAt,
             markAllRead,
             markRead,
             notifications,
             refreshAccount,
+            rememberDisplayedBalanceSoon,
             unreadCount,
         ]
     );

@@ -76,7 +76,13 @@ function Dashboard() {
         accountError,
         refreshAccount,
         lastUpdatedAt,
+        getLastDisplayedBalance,
+        cancelRememberDisplayedBalance,
+        rememberDisplayedBalanceSoon,
     } = useRealtime();
+    const [fromBalance] = useState(() => getLastDisplayedBalance());
+    const balanceRef = useRef(balance);
+    balanceRef.current = balance;
     const [transactions, setTransactions] = useState([]);
     const [transactionsLoading, setTransactionsLoading] = useState(true);
     const [transactionsError, setTransactionsError] = useState("");
@@ -185,6 +191,16 @@ function Dashboard() {
         };
     }, [lastUpdatedAt]);
 
+    useEffect(() => {
+        cancelRememberDisplayedBalance();
+
+        return () => {
+            if (balanceRef.current != null) {
+                rememberDisplayedBalanceSoon(balanceRef.current);
+            }
+        };
+    }, [cancelRememberDisplayedBalance, rememberDisplayedBalanceSoon]);
+
     if (loading) {
         return (
             <main className="dashboard-page">
@@ -234,9 +250,13 @@ function Dashboard() {
                 </div>
                 <h2 className="dashboard-balance-amount">
                     <span className="dashboard-currency" ref={currencyRef}>$</span>
-                    {balanceVisible ? (
+                    <span
+                        className={`dashboard-balance-counter${balanceVisible ? "" : " is-hidden"}`}
+                        aria-hidden={!balanceVisible}
+                    >
                         <Counter
                             value={balance ?? 0}
+                            fromValue={fromBalance}
                             fractionDigits={2}
                             decimalSeparator=","
                             thousandSeparator="."
@@ -247,7 +267,8 @@ function Dashboard() {
                             textColor="currentColor"
                             fontWeight="bold"
                         />
-                    ) : (
+                    </span>
+                    {!balanceVisible && (
                         <span className="dashboard-balance-masked">********</span>
                     )}
                 </h2>
