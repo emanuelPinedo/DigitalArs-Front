@@ -258,7 +258,7 @@ function PanelAdmin() {
 
         try {
 
-            await UserService.delete(
+            await UserService.remove(
                 selectedUser.id
             );
 
