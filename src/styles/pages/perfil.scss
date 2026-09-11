@@ -1,9 +1,6 @@
 @use '../tokens' as *;
 
-
-/* =========================
-   PÁGINA
-   ========================= */
+/* PÁGINA */
 
 .profile-page {
   display: flex;
@@ -19,9 +16,7 @@
 }
 
 
-/* =========================
-   TARJETA RESUMEN
-   ========================= */
+/* TARJETA RESUMEN */
 
 .profile-summary-card {
   width: 100%;
@@ -93,9 +88,7 @@
 }
 
 
-/* =========================
-   FORMULARIO
-   ========================= */
+/* FORMULARIO */
 
 .profile-form-card {
   width: 100%;
@@ -152,7 +145,6 @@
 
 }
 
-
 /* Campos editables */ 
 .profile-page input:not(:disabled):focus {
   border-color: var(--color-brand);
@@ -167,9 +159,43 @@
   opacity: 0.85; 
 }
 
-/* =========================
-   ACCIONES DEL FORM
-   ========================= */
+/* CAMPOS DE CONTRASEÑA */
+
+.profile-page {
+    .password-input {
+        position: relative;
+        width: 100%;
+    }
+
+    .password-input input {
+        padding-right: 44px;
+    }
+
+    .toggle-password {
+        position: absolute;
+        top: 50%;
+        right: $space-2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        cursor: pointer;
+    }
+
+    .toggle-password-icon {
+        display: block;
+        width: $font-size-md;
+        height: $font-size-md;
+        transform: translateY(10px);
+    }
+}
+
+/* ACCIONES DEL FORM */
 
 .profile-form-actions {
   grid-column: 1 / -1;
@@ -312,9 +338,7 @@
 }
 
 
-/* =========================
-   TABLET
-   ========================= */
+/* TABLET */
 
 @media (max-width: $breakpoint-md) {
   .profile-page {
@@ -338,9 +362,7 @@
 
 }
 
-/* =========================
-   MOBILE
-   ========================= */
+/* MOBILE */
 
 @media (max-width: $breakpoint-sm) {
   .profile-summary {
